@@ -5,7 +5,7 @@
 	 * @package ElggGroups
 	 */
 
-	require_once(dirname(dirname(dirname(dirname(__FILE__)))) . "/engine/start.php");
+	require_once( $_SERVER['DOCUMENT_ROOT'] . "/engine/start.php");
 
 	$limit = get_input("limit", 10);
 	$offset = get_input("offset", 0);

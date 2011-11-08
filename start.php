@@ -57,7 +57,7 @@
 		register_action("groups/killrequest", false, $CONFIG->pluginspath . "theme_inria/actions/groups/groupskillrequest.php");
 		
 		register_plugin_hook('object:notifications','object','friends_notifications_intercept');
-		register_plugin_hook( 'forward', 'system', 'theme_inria_forward_hook');
+		//register_plugin_hook( 'forward', 'system', 'theme_inria_forward_hook');
 		//register_plugin_hook( 'action', 'logout', 'theme_inria_logout_hook');
 		
 	}

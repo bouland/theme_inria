@@ -7,7 +7,7 @@
 	 */
 
 	// Load Elgg engine
-		require_once(dirname(dirname(dirname(dirname(__FILE__)))) . "/engine/start.php");
+		require_once( $_SERVER['DOCUMENT_ROOT'] . "/engine/start.php");
 
 	// Get the specified blog post
 		$post = (int) get_input('blogpost');
