@@ -78,7 +78,9 @@
 	}
 	function theme_inria_forward_hook($hook, $entity_type, $returnvalue, $params){
 		global $CONFIG;
-		$_SESSION['last_forward_from'] = $CONFIG->url . $_SERVER['REDIRECT_URL'];
+		if ($_SERVER['REDIRECT_URL'] != '/action/logout'){
+			$_SESSION['last_forward_from'] = $CONFIG->url . $_SERVER['REDIRECT_URL'];
+		}
 	}
 	function theme_inria_forward_hook_old($hook, $entity_type, $returnvalue, $params){
 		
