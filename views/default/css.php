@@ -550,7 +550,7 @@ HORIZONTAL ELGG TOPBAR RIGHT
 
 #elgg_topbar_container_search {
 	float:right;
-	top:90px;
+	top:70%;
 	right:25px;
 	position:absolute;
 }
@@ -564,15 +564,22 @@ HORIZONTAL ELGG TOPBAR RIGHT
 	background:#D7D4D6 url(<?php echo $vars['url'].'mod/theme_inria/graphics/header_bottom.gif'?>) repeat-x;
 }
 #banner_layout{
-	text-align:left;
-	height:120px;
 	position:relative;
-	background:#363842;
+	height:95px;
 	width:100%;
+	background-color:#363842;
 }
-#banner_layout img {
-	width:840px;
+div.logo{
+	background-color:white;
+	height:auto;
+	width:auto;
+	float:left;
+	text-align:center;
 }
+.logo img{
+	display:inline;
+}
+
 .connected{
 	margin-top: 28px;
 }

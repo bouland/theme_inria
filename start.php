@@ -50,14 +50,15 @@
 	
 		unregister_elgg_event_handler('pagesetup','system','tidypics_submenus');
 		register_elgg_event_handler('pagesetup','system','tidypics_submenus_inria');	
-	
+		
+
 		
 		register_action("groups/membershipreq", false, $CONFIG->pluginspath . "theme_inria/actions/groups/membershipreq.php");
 		register_action("groups/membershiprej", false, $CONFIG->pluginspath . "theme_inria/actions/groups/membershiprej.php");
 		register_action("groups/killrequest", false, $CONFIG->pluginspath . "theme_inria/actions/groups/groupskillrequest.php");
 		
 		register_plugin_hook('object:notifications','object','friends_notifications_intercept');
-		//register_plugin_hook( 'forward', 'system', 'theme_inria_forward_hook');
+		register_plugin_hook( 'forward', 'system', 'theme_inria_forward_hook');
 		//register_plugin_hook( 'action', 'logout', 'theme_inria_logout_hook');
 		
 	}
@@ -76,6 +77,10 @@
 		return null;
 	}
 	function theme_inria_forward_hook($hook, $entity_type, $returnvalue, $params){
+		global $CONFIG;
+		$_SESSION['last_forward_from'] = $CONFIG->url . $_SERVER['REDIRECT_URL'];
+	}
+	function theme_inria_forward_hook_old($hook, $entity_type, $returnvalue, $params){
 		
 		global $CONFIG;
 		
