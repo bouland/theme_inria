@@ -565,7 +565,7 @@ HORIZONTAL ELGG TOPBAR RIGHT
 }
 #banner_layout{
 	position:relative;
-	height:95px;
+	height:100px;
 	width:100%;
 	background-color:#363842;
 }
