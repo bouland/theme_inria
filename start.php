@@ -61,6 +61,9 @@
 		register_plugin_hook( 'forward', 'system', 'theme_inria_forward_hook');
 		//register_plugin_hook( 'action', 'logout', 'theme_inria_logout_hook');
 		
+		unregister_plugin_hook('access:collections:write', 'all', 'groups_write_acl_plugin_hook');
+		register_plugin_hook('access:collections:write', 'all', 'groups_write_acl_plugin_hook_inria');
+		
 	}
 	
 	
@@ -371,7 +374,7 @@
 		if ($page_owner instanceof ElggGroup && get_context() == 'groups') {
 			if ($page_owner->bookmarks_enable != "no") {
 				//add_submenu_item(sprintf(elgg_echo("bookmarks:group"),$page_owner->name), $CONFIG->wwwroot . "pg/bookmarks/owner/" . $page_owner->username);
-				add_submenu_item(elgg_echo('theme_inria:bookmarks:group:new'), $CONFIG->wwwroot."pg/bookmarks/add/" . $_SESSION['user']->username);
+				add_submenu_item(elgg_echo('theme_inria:bookmarks:group:new'), $CONFIG->wwwroot."pg/bookmarks/add/" . $page_owner->username);
 			}
 		}
 	
@@ -707,3 +710,16 @@
 		global $CONFIG;
 		return include $CONFIG->pluginspath . 'theme_inria/groups/groupskillrequest.php';
 	}
+	function groups_write_acl_plugin_hook_inria($hook, $entity_type, $returnvalue, $params)
+	{
+		$page_owner = page_owner_entity();
+		// get all groups of user in question
+		$user = get_entity($params['user_id']);
+		if ($page_owner instanceof ElggGroup) {
+			$returnvalue[$page_owner->group_acl] = elgg_echo('groups:group');
+		}
+		
+		
+		return $returnvalue;
+	}
+	
