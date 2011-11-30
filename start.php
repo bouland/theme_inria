@@ -28,7 +28,8 @@
 		
 		unregister_page_handler('blog','blog_page_handler');
 		register_page_handler('blog','blog_page_handler_inria');
-		
+		unregister_plugin_hook('notify:entity:message', 'object', 'blog_notify_message');
+		register_plugin_hook('notify:entity:message', 'object', 'blog_notify_message_inria');
 		
 		unregister_elgg_event_handler('pagesetup','system','blog_pagesetup');
 		register_elgg_event_handler('pagesetup','system','blog_pagesetup_inria');
@@ -57,61 +58,29 @@
 		register_action("groups/membershiprej", false, $CONFIG->pluginspath . "theme_inria/actions/groups/membershiprej.php");
 		register_action("groups/killrequest", false, $CONFIG->pluginspath . "theme_inria/actions/groups/groupskillrequest.php");
 		
-		register_plugin_hook('object:notifications','object','friends_notifications_intercept');
 		register_plugin_hook( 'forward', 'system', 'theme_inria_forward_hook');
 		//register_plugin_hook( 'action', 'logout', 'theme_inria_logout_hook');
 		
 		unregister_plugin_hook('access:collections:write', 'all', 'groups_write_acl_plugin_hook');
 		register_plugin_hook('access:collections:write', 'all', 'groups_write_acl_plugin_hook_inria');
 		
+		unregister_plugin_hook('email', 'system', 'phpmailer_mail_override');
+		register_plugin_hook('email', 'system', 'phpmailer_mail_override_inria');
+		
+		register_notification_handler("email", "email_notify_handler_inria");
+		
+		unregister_elgg_event_handler('create','object','object_notifications');
+		register_elgg_event_handler('create','object','object_notifications_inria');
 	}
 	
 	
-	function friends_notifications_intercept($hook, $entity_type, $returnvalue, $params) {
-		if (isset($params)) {
-			if ($params['event'] == 'create' && $params['object'] instanceof ElggObject) {
-				if ($params['object']->getSubtype() == 'event_calendar') {
-					if ($params['object']->event_type == 'meeting'){
-						return true;
-					}
-				}
-			}
-		}
-		return null;
-	}
+
 	function theme_inria_forward_hook($hook, $entity_type, $returnvalue, $params){
 		global $CONFIG;
 		if ($_SERVER['REDIRECT_URL'] != '/action/logout'){
 			$_SESSION['last_forward_from'] = $CONFIG->url . $_SERVER['REDIRECT_URL'];
 		}
 	}
-	function theme_inria_forward_hook_old($hook, $entity_type, $returnvalue, $params){
-		
-		global $CONFIG;
-		
-		if($params['current_url'] && $params['forward_url']){
-			if (!isloggedin()){
-				
-				if (substr_count($params['current_url'],'action/logout') == 0){
-					//if( ($params['forward_url'] != )){
-						$_SESSION['redirect_url'] = $params['current_url'];
-						$returnvalue = "{$CONFIG->wwwroot}mod/theme_inria/redirect.php";
-					//}
-				}
-			}else{
-				if (substr_count($params['current_url'],'action/login') != 0){
-					if (isset($_SESSION['redirect_url'])){
-						if($params['forward_url'] != $_SESSION['redirect_url']){
-							forward($_SESSION['redirect_url']);
-						}
-					}
-				}
-			}
-		}
-		
-		return $returnvalue;
-	}
-	
 	function theme_inria_logout_hook($hook, $entity_type, $returnvalue, $params){
 		
 		global $CONFIG;
@@ -243,7 +212,7 @@
 
 				if($page_owner->forum_enable != "no"){
 					if (can_write_to_container(0, page_owner()) && isloggedin())
-						add_submenu_item(elgg_echo('groups:addtopic'),$CONFIG->wwwroot . "pg/forum/new//{$page_owner->getGUID()}/");
+						add_submenu_item(elgg_echo('groups:addtopic'),$CONFIG->wwwroot . "pg/forum/new/{$page_owner->getGUID()}/");
 				
 				}
 			}
@@ -722,4 +691,143 @@
 		
 		return $returnvalue;
 	}
+	function phpmailer_mail_override_inria($hook, $entity_type, $returnvalue, $params) {
+		return phpmailer_send($params['from'], $params['from_name'], $params['to'], $params['to_name'], $params['subject'], $params['body']);
+	}
+	function email_notify_handler_inria(ElggEntity $from, ElggUser $to, $subject, $message, array $params = NULL) {
+		global $CONFIG;
 	
+		if (!($from instanceof ElggEntity)) {
+			throw new NotificationException(sprintf(elgg_echo('NotificationException:MissingParameter'), 'from'));
+		}
+	
+		if (!($to instanceof ElggUser)) {
+			throw new NotificationException(sprintf(elgg_echo('NotificationException:MissingParameter'), 'to'));
+		}
+	
+		if ($to->email=="") {
+			throw new NotificationException(sprintf(elgg_echo('NotificationException:NoEmailAddress'), $to->guid));
+		}
+		
+		$params = array();
+		
+		$site = get_entity($CONFIG->site_guid);
+		
+		if ($from instanceof ElggUser) {
+			$params['from'] = $from->email;
+			$params['from_name'] = $from->name;
+		} else if ($from instanceof ElggGroup && $site && $site->email) {
+		// Use email address of current site if we cannot use sender's email
+			$params['from'] = $from->guid . "+" . $site->email;
+			$params['from_name'] = elgg_echo("theme_inria:mail:fromgrouptag") . $from->name;
+		} else if ($site && $site->email) {
+		// Use email address of current site if we cannot use sender's email
+			$params['from'] = $site->email;
+			$params['from_name'] = $site->name;
+		} else {
+			// If all else fails, use the domain of the site.
+			$params['from'] = 'noreply@' . get_site_domain($CONFIG->site_guid);
+		}
+		
+		$params['to'] = $to->email;
+		$params['to_name']= $to->name;
+		
+		$params['subject'] = $subject;
+		$params['body'] = $message;
+		
+		return trigger_plugin_hook('email', 'system', $params, NULL);
+	}
+	function object_notifications_inria($event, $object_type, $object) {
+		// We only want to trigger notification events for ElggEntities
+		if ($object instanceof ElggEntity) {
+	
+			// Get config data
+			global $CONFIG, $SESSION, $NOTIFICATION_HANDLERS;
+	
+			$hookresult = trigger_plugin_hook('object:notifications',$object_type,array(
+				'event' => $event,
+				'object_type' => $object_type,
+				'object' => $object,
+			), false);
+			if ($hookresult === true) {
+				return true;
+			}
+	
+			// Have we registered notifications for this type of entity?
+			$object_type = $object->getType();
+			if (empty($object_type)) {
+				$object_type = '__BLANK__';
+			}
+	
+			$object_subtype = $object->getSubtype();
+			if (empty($object_subtype)) {
+				$object_subtype = '__BLANK__';
+			}
+	
+			if (isset($CONFIG->register_objects[$object_type][$object_subtype])) {
+				$descr = $CONFIG->register_objects[$object_type][$object_subtype];
+				$string = $descr . ": " . $object->getURL();
+	
+				// Get users interested in content from this person and notify them
+				// (Person defined by container_guid so we can also subscribe to groups if we want)
+				foreach($NOTIFICATION_HANDLERS as $method => $foo) {
+					$interested_users = elgg_get_entities_from_relationship(array(
+						'relationship' => 'notify' . $method,
+						'relationship_guid' => $object->container_guid, 
+						'inverse_relationship' => TRUE,
+						'types' => 'user',
+						'limit' => 99999
+					));
+	
+					if ($interested_users && is_array($interested_users)) {
+						foreach($interested_users as $user) {
+							if ($user instanceof ElggUser && !$user->isBanned()) {
+								if (($user->guid != $SESSION['user']->guid) && has_access_to_entity($object,$user)
+								&& $object->access_id != ACCESS_PRIVATE) {
+									$methodstring = trigger_plugin_hook('notify:entity:message',$object->getType(),array(
+										'entity' => $object,
+										'to_entity' => $user,
+										'method' => $method),$string);
+									//hack INRIA
+									if(is_array($methodstring) ){
+										if (isset($methodstring['to']) && isset($methodstring['from']) && isset($methodstring['subject']) && isset($methodstring['message'])){
+											notify_user($methodstring['to'], $methodstring['from'], $methodstring['subject'], $methodstring['message'], NULL, array($method));
+										}
+									}
+									else if (empty($methodstring) && $methodstring !== false) {
+										$methodstring = $string;
+										notify_user($user->guid,$object->container_guid,$descr,$methodstring,NULL,array($method));
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	function blog_notify_message_inria($hook, $entity_type, $returnvalue, $params)
+	{
+		$entity = $params['entity'];
+		$to_entity = $params['to_entity'];
+		$method = $params['method'];
+		if (($entity instanceof ElggEntity) && ($entity->getSubtype() == 'blog'))
+		{
+			$owner = $entity->getOwnerEntity();
+			if ($method == 'sms') {
+				return $owner->name . ' via blog: ' . $entity->title;
+			}
+			if ($method == 'email') {
+				if (is_callable('object_notifications_inria')) {
+					$owner = $entity->getOwnerEntity();
+					return array('to'      => $to_entity->guid,
+								 'from'    => $entity->container_guid,
+								 'subject' => $entity->title,
+								 'message' => $entity->description . "\n\n--\n" . $owner->name  . "\n\n" . $entity->getURL());
+				}else{
+					return $returnvalue;
+				}
+			}
+		}
+		return null;
+	}

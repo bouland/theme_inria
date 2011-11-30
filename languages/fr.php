@@ -59,6 +59,7 @@
 		'theme_inria:membershiprej:cancel' => 'Annuler',
 		'theme_inria:redirect:title' => 'Login requis',
 		
+		'theme_inria:mail:fromgrouptag' => 'Groupe ',
 	);
 					
 	add_translation("fr",$french);
