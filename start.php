@@ -28,6 +28,7 @@
 		
 		unregister_page_handler('blog','blog_page_handler');
 		register_page_handler('blog','blog_page_handler_inria');
+		
 		unregister_plugin_hook('notify:entity:message', 'object', 'blog_notify_message');
 		register_plugin_hook('notify:entity:message', 'object', 'blog_notify_message_inria');
 		
@@ -39,6 +40,9 @@
 	
 		unregister_elgg_event_handler('pagesetup','system','groups_submenus');
 		register_elgg_event_handler('pagesetup','system','groups_submenus_inria');
+		
+		unregister_plugin_hook('notify:entity:message', 'object', 'groupforumtopic_notify_message');
+		register_plugin_hook('notify:entity:message', 'object', 'groupforumtopic_notify_message_inria');
 		
 		unregister_elgg_event_handler('pagesetup','system','pages_submenus');
 		register_elgg_event_handler('pagesetup','system','pages_submenus_inria');
@@ -71,6 +75,20 @@
 		
 		unregister_elgg_event_handler('create','object','object_notifications');
 		register_elgg_event_handler('create','object','object_notifications_inria');
+		
+		if (isset($CONFIG->group_tool_options)) {
+			$group_tool_defaults = array('pages');
+			$group_tool_options = $CONFIG->group_tool_options;
+			foreach ($group_tool_options as $group_tool_option) {
+				if (in_array($group_tool_option->name, $group_tool_defaults)){
+					$group_tool_option->default_on = true;
+				}else{
+					$group_tool_option->default_on = false;
+				}
+			}
+			$CONFIG->group_tool_options = $group_tool_options;
+		}
+		
 	}
 	
 	
@@ -828,6 +846,41 @@
 					return $returnvalue;
 				}
 			}
+		}
+		return null;
+	}
+	function groupforumtopic_notify_message_inria($hook, $entity_type, $returnvalue, $params)
+	{
+		$entity = $params['entity'];
+		$to_entity = $params['to_entity'];
+		$method = $params['method'];
+		if (($entity instanceof ElggEntity) && ($entity->getSubtype() == 'groupforumtopic'))
+		{
+	
+			$descr = $entity->description;
+			$title = $entity->title;
+			global $CONFIG;
+			$url = $entity->getURL();
+	
+			$msg = get_input('topicmessage');
+			if (empty($msg)) $msg = get_input('topic_post');
+			if (!empty($msg)) $msg = $msg . "\n\n"; else $msg = '';
+	
+			$owner = get_entity($entity->container_guid);
+			if ($method == 'sms') {
+				return elgg_echo("groupforumtopic:new") . ': ' . $url . " ({$owner->name}: {$title})";
+			}else if ($method == 'email') {
+				if (is_callable('object_notifications_inria')) {
+					$owner = $entity->getOwnerEntity();
+					return array('to'      => $to_entity->guid,
+								 'from'    => $entity->container_guid,
+								 'subject' => $entity->title,
+								 'message' => $msg . "\n\n--\n" . $owner->name  . "\n\n" . $entity->getURL());
+				}else{
+					return $returnvalue;
+				}
+			}
+	
 		}
 		return null;
 	}

@@ -1799,7 +1799,7 @@ ul#friends_collections_accordian {
 	overflow: hidden;
 	margin: 0;
 	padding:0;
-	width: 678px;
+	width: 717px;
 
 	height: auto;
 	background: #FBFBFF;
@@ -1819,7 +1819,7 @@ ul#friends_collections_accordian {
 	float:left;
 	height: 100%;
 	position: relative;
-	width: 678px;
+	width: 717px;
 	margin: 0;
 	padding:0;
 }
