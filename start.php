@@ -76,6 +76,9 @@
 		unregister_elgg_event_handler('create','object','object_notifications');
 		register_elgg_event_handler('create','object','object_notifications_inria');
 		
+		unregister_elgg_event_handler('create', 'group', 'groups_create_event_listener');
+		register_elgg_event_handler('create', 'group', 'groups_create_event_listener_inria');
+		
 		if (isset($CONFIG->group_tool_options)) {
 			$group_tool_defaults = array('pages');
 			$group_tool_options = $CONFIG->group_tool_options;
@@ -710,7 +713,7 @@
 		return $returnvalue;
 	}
 	function phpmailer_mail_override_inria($hook, $entity_type, $returnvalue, $params) {
-		return phpmailer_send($params['from'], $params['from_name'], $params['to'], $params['to_name'], $params['subject'], $params['body']);
+		return phpmailer_send($params['from'], $params['from_name'], $params['to'], $params['to_name'], $params['subject'], $params['body'], NULL, true);
 	}
 	function email_notify_handler_inria(ElggEntity $from, ElggUser $to, $subject, $message, array $params = NULL) {
 		global $CONFIG;
@@ -812,7 +815,7 @@
 											notify_user($methodstring['to'], $methodstring['from'], $methodstring['subject'], $methodstring['message'], NULL, array($method));
 										}
 									}
-									else if (empty($methodstring) && $methodstring !== false) {
+									else if (!empty($methodstring) && $methodstring !== false) {
 										$methodstring = $string;
 										notify_user($user->guid,$object->container_guid,$descr,$methodstring,NULL,array($method));
 									}
@@ -841,7 +844,7 @@
 					return array('to'      => $to_entity->guid,
 								 'from'    => $entity->container_guid,
 								 'subject' => $entity->title,
-								 'message' => $entity->description . "\n\n--\n" . $owner->name  . "\n\n" . $entity->getURL());
+								 'message' => $entity->description . "<br />" . $owner->name  . "<br />" . $entity->getURL());
 				}else{
 					return $returnvalue;
 				}
@@ -883,4 +886,21 @@
 	
 		}
 		return null;
+	}
+	function groups_create_event_listener_inria($event, $object_type, $object)
+	{
+		global $CONFIG;
+		$ac_name = elgg_echo('groups:group') . ": " . $object->name;
+		$group_id = create_access_collection($ac_name, $object->guid);
+		if ($group_id) {
+			if ($object->access_id == ACCESS_PRIVATE){
+				update_data("UPDATE {$CONFIG->dbprefix}entities set access_id='$group_id' where guid={$object->guid}");
+			}
+			$object->group_acl = $group_id;
+		} else {
+			// delete group if access creation fails
+			return false;
+		}
+	
+		return true;
 	}

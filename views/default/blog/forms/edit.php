@@ -29,15 +29,17 @@
 			$body = "";
 			$comments_on = true;
 			$description = "";
-			if ($vars['container_guid']) {
-				$group = get_entity($vars['container_guid']);
-				if ($group && $group instanceof ElggGroup)
-					$access_id = $group->group_acl;
-			} elseif (defined('ACCESS_DEFAULT')){
+			if (defined('ACCESS_DEFAULT')){
 				$access_id = ACCESS_DEFAULT;
 			} else {
 				$access_id = 0;
-			}	
+			}
+			if ($vars['container_guid']) {
+				$group = get_entity($vars['container_guid']);
+				if ($group && $group instanceof ElggGroup && isset($group->group_acl) ){
+					$access_id = $group->group_acl;
+				}		
+			}
 
 			$container = $vars['container_guid'] ? elgg_view('input/hidden', array('internalname' => 'container_guid', 'value' => $vars['container_guid'])) : "";
 		}

@@ -24,7 +24,7 @@
 			$vars['entity']->write_access_id = 0;
 		}
 		$container = page_owner_entity();
-		if ($container && $container instanceof ElggGroup){
+		if ($container && $container instanceof ElggGroup && isset($container->group_acl) ){
 			$vars['entity']->access_id = $container->group_acl;
 			$vars['entity']->write_access_id = $container->group_acl;
 		}
