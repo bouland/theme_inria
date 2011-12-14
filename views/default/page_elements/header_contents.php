@@ -9,11 +9,35 @@
  * @link http://elgg.org/
  **/
 
-?>
 
+?>
+<script type="text/javascript">
+	function random_image(){
+	  var images=new Array()
+	  //specify random images below. You can have as many as you wish
+	  <?php
+	  	$dir = 'mod/theme_inria/graphics/aleatoire/';
+	    if ($handle = opendir($dir)) {
+	    	$i = 1;
+	   		while (false !== ($file = readdir($handle))) {
+	    		if ($file != "." && $file != ".." && !is_dir($file)) {
+					echo 'images[' . $i . ']="' . $dir . $file . '"' . "\n";
+					$i++;
+	            }
+	        }
+	        closedir($handle);
+	    }
+	  ?>
+	  var ry=Math.floor(Math.random()*images.length)
+	
+	  if (ry==0)
+	     ry=1
+		document.write('<img height="100" src="' + images[ry] + '" border=0>');
+	}
+</script>
 <div id="banner_layout" class="<?php if (isloggedin()) {echo 'connected';}?>">
 	<div class="logo"><a href="https://www.inria.fr/"><img alt="Inria" width="195" height="100" src="<?php echo $vars['url']; ?>mod/theme_inria/graphics/logo_devnet_SB-2.jpg" /></a></div>
-    <div class="logo"><a href="<?php echo $vars['url']; ?>"><script language="javascript">document.write('<img height="100" src="<?php echo $vars['url']; ?>mod/theme_inria/graphics/aleatoire/' + parseInt(Math.random()*08) + '.png" >');</script></a></div>
+    <div class="logo"><a href="<?php echo $vars['url']; ?>"><script type="text/javascript">random_image()</script></a></div>
 <?php
 	if (isloggedin()) {
 ?>
