@@ -16,12 +16,14 @@
 	  var images=new Array()
 	  //specify random images below. You can have as many as you wish
 	  <?php
+	  	global $CONFIG;
 	  	$dir = 'mod/theme_inria/graphics/aleatoire/';
-	    if ($handle = opendir($dir)) {
+	  	$c=getcwd();
+	    if ($handle = opendir($CONFIG->path . $dir)) {
 	    	$i = 1;
 	   		while (false !== ($file = readdir($handle))) {
 	    		if ($file != "." && $file != ".." && !is_dir($file)) {
-					echo 'images[' . $i . ']="' . $dir . $file . '"' . "\n";
+					echo 'images[' . $i . ']="' . $CONFIG->url . $dir . $file . '"' . "\n";
 					$i++;
 	            }
 	        }
