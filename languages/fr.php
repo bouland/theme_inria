@@ -60,6 +60,10 @@
 		'theme_inria:redirect:title' => 'Login requis',
 		
 		'theme_inria:mail:fromgrouptag' => 'Groupe ',
+		
+		'theme_inria:topbar:publications' => 'Les&nbsp;publications',
+		'theme_inria:topbar:presentation' => 'Les&nbsp;présentations',
+		
 	);
 					
 	add_translation("fr",$french);

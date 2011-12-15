@@ -55,6 +55,14 @@ $(function() {
 					<li><a href="<?php echo $vars['url']; ?>pg/members/all/"><?php echo elgg_echo('theme_inria:topbar:members'); ?></a></li>
 					<li><a href="<?php echo $vars['url']; ?>pg/activity/"><?php echo elgg_echo('theme_inria:topbar:activity'); ?></a></li>
 					<li><a href="<?php echo $vars['url']; ?>pg/pages/all/"><?php echo elgg_echo('theme_inria:topbar:pages'); ?></a></li>
+		<?php
+			if (is_plugin_enabled('presentation')) {
+				echo '<li><a href="' . $vars['url']. 'pg/presentation/' . $_SESSION['user']->username . '/everyone/ ">' . elgg_echo('theme_inria:topbar:presentation') . '</a></li>';
+			}		
+			if (is_plugin_enabled('publications')) {
+				echo '<li><a href="' . $vars['url']. 'pg/publications/' . $_SESSION['user']->username . '/everyone/ ">' . elgg_echo('theme_inria:topbar:publications') . '</a></li>';
+			}		
+		?>
 				</ul>
 				</li>
 				<li class="drop"><a href="#" class="menuitemtools"><?php echo elgg_echo('theme_inria:topbar:action'); ?></a>
