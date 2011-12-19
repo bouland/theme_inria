@@ -76,6 +76,9 @@
 		unregister_elgg_event_handler('create','object','object_notifications');
 		register_elgg_event_handler('create','object','object_notifications_inria');
 		
+		unregister_elgg_event_handler('annotate','all','group_object_notifications');
+		register_elgg_event_handler('annotate','all','group_object_notifications_inria');
+		
 		unregister_elgg_event_handler('create', 'group', 'groups_create_event_listener');
 		register_elgg_event_handler('create', 'group', 'groups_create_event_listener_inria');
 		
@@ -827,6 +830,24 @@
 			}
 		}
 	}
+	function group_object_notifications_inria($event, $object_type, $object) {
+	
+		static $flag;
+		if (!isset($flag)) $flag = 0;
+	
+		if (is_callable('object_notifications_inria'))
+		if ($object instanceof ElggObject) {
+			if ($object->getSubtype() == 'groupforumtopic') {
+				//if ($object->countAnnotations('group_topic_post') > 0) {
+				if ($flag == 0) {
+					$flag = 1;
+					object_notifications_inria($event, $object_type, $object);
+				}
+				//}
+			}
+		}
+	
+	}
 	function blog_notify_message_inria($hook, $entity_type, $returnvalue, $params)
 	{
 		$entity = $params['entity'];
@@ -844,7 +865,7 @@
 					return array('to'      => $to_entity->guid,
 								 'from'    => $entity->container_guid,
 								 'subject' => $entity->title,
-								 'message' => $entity->description . "<br />" . $owner->name  . "<br />" . $entity->getURL());
+								 'message' => $entity->description . "<br />--<br />" . $owner->name  . "<br /><br />" . $entity->getURL());
 				}else{
 					return $returnvalue;
 				}
@@ -878,7 +899,7 @@
 					return array('to'      => $to_entity->guid,
 								 'from'    => $entity->container_guid,
 								 'subject' => $entity->title,
-								 'message' => $msg . "\n\n--\n" . $owner->name  . "\n\n" . $entity->getURL());
+								 'message' => $msg . "<br />--<br />" . $owner->name  . "<br /><br />" . $entity->getURL());
 				}else{
 					return $returnvalue;
 				}
