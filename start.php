@@ -35,6 +35,9 @@
 		unregister_elgg_event_handler('pagesetup','system','blog_pagesetup');
 		register_elgg_event_handler('pagesetup','system','blog_pagesetup_inria');
 		
+		unregister_plugin_hook('notify:entity:message', 'object', 'file_notify_message');
+		register_plugin_hook('notify:entity:message', 'object', 'file_notify_message_inria');
+		
 		unregister_elgg_event_handler('pagesetup','system','file_submenus');
 		register_elgg_event_handler('pagesetup','system','file_submenus_inria');
 	
@@ -43,12 +46,18 @@
 		
 		unregister_plugin_hook('notify:entity:message', 'object', 'groupforumtopic_notify_message');
 		register_plugin_hook('notify:entity:message', 'object', 'groupforumtopic_notify_message_inria');
+
+		unregister_plugin_hook('notify:entity:message', 'object', 'page_notify_message');
+		register_plugin_hook('notify:entity:message', 'object', 'page_notify_message_inria');
 		
 		unregister_elgg_event_handler('pagesetup','system','pages_submenus');
 		register_elgg_event_handler('pagesetup','system','pages_submenus_inria');
 		
 		unregister_elgg_event_handler('pagesetup','system','event_calendar_pagesetup');
     	register_elgg_event_handler('pagesetup','system','event_calendar_pagesetup_inria');
+    	
+    	unregister_plugin_hook('notify:entity:message', 'object', 'bookmarks_notify_message');
+    	register_plugin_hook('notify:entity:message', 'object', 'bookmarks_notify_message_inria');
     	
     	unregister_elgg_event_handler('pagesetup','system','bookmarks_pagesetup');
     	register_elgg_event_handler('pagesetup','system','bookmarks_pagesetup_inria');
@@ -908,6 +917,110 @@
 		}
 		return null;
 	}
+	function page_notify_message_inria($hook, $entity_type, $returnvalue, $params)
+	{
+		$entity = $params['entity'];
+		$to_entity = $params['to_entity'];
+		$method = $params['method'];
+		if (($entity instanceof ElggEntity) && (($entity->getSubtype() == 'page_top') || ($entity->getSubtype() == 'page')))
+		{
+			$descr = $entity->description;
+			$title = $entity->title;
+			global $CONFIG;
+			$url = $CONFIG->wwwroot . "pg/view/" . $entity->guid;
+			if ($method == 'sms') {
+				$owner = $entity->getOwnerEntity();
+				return $owner->name . ' ' . elgg_echo("pages:via") . ': ' . $url . ' (' . $title . ')';
+			}
+			if ($method == 'email') {
+				$owner = $entity->getOwnerEntity();
+				if (is_callable('object_notifications_inria')) {
+					$owner = $entity->getOwnerEntity();
+					return array('to'      => $to_entity->guid,
+								 'from'    => $entity->container_guid,
+								 'subject' => $entity->title,
+								 'message' => $entity->description . "<br />--<br />" . $owner->name  . "<br /><br />" . $entity->getURL());
+				}else{
+				
+					return $owner->name . ' ' . elgg_echo("pages:via") . ': ' . $title . "\n\n" . $descr . "\n\n" . $entity->getURL();
+				}
+				
+			}
+			if ($method == 'site') {
+				$owner = $entity->getOwnerEntity();
+				return $owner->name . ' ' . elgg_echo("pages:via") . ': ' . $title . "\n\n" . $descr . "\n\n" . $entity->getURL();
+			}
+		}
+		return null;
+	}
+	function file_notify_message_inria($hook, $entity_type, $returnvalue, $params)
+	{
+		$entity = $params['entity'];
+		$to_entity = $params['to_entity'];
+		$method = $params['method'];
+		if (($entity instanceof ElggEntity) && ($entity->getSubtype() == 'file'))
+		{
+			$descr = $entity->description;
+			$title = $entity->title;
+			global $CONFIG;
+			$url = $CONFIG->wwwroot . "pg/view/" . $entity->guid;
+			if ($method == 'sms') {
+				$owner = $entity->getOwnerEntity();
+				return $owner->name . ' ' . elgg_echo("file:via") . ': ' . $url . ' (' . $title . ')';
+			}
+			if ($method == 'email') {
+				$owner = $entity->getOwnerEntity();
+				if (is_callable('object_notifications_inria')) {
+					$owner = $entity->getOwnerEntity();
+					return array('to'      => $to_entity->guid,
+								 'from'    => $entity->container_guid,
+								 'subject' => $entity->title,
+								 'message' => $entity->description . "<br />--<br />" . $owner->name  . "<br /><br />" . $entity->getURL());
+				}else{
+					return $owner->name . ' ' . elgg_echo("file:via") . ': ' . $entity->title . "\n\n" . $descr . "\n\n" . $entity->getURL();
+				}
+			}
+			if ($method == 'web') {
+				$owner = $entity->getOwnerEntity();
+				return $owner->name . ' ' . elgg_echo("file:via") . ': ' . $entity->title . "\n\n" . $descr . "\n\n" . $entity->getURL();
+			}
+		}
+		return null;
+	}
+	function bookmarks_notify_message_inria($hook, $entity_type, $returnvalue, $params) {
+		$entity = $params['entity'];
+		$to_entity = $params['to_entity'];
+		$method = $params['method'];
+		if (($entity instanceof ElggEntity) && ($entity->getSubtype() == 'bookmarks')) {
+			$descr = $entity->description;
+			$title = $entity->title;
+			global $CONFIG;
+			$url = $CONFIG->wwwroot . "pg/view/" . $entity->guid;
+			if ($method == 'sms') {
+				$owner = $entity->getOwnerEntity();
+				return $owner->name . ' ' . elgg_echo("bookmarks:via") . ': ' . $url . ' (' . $title . ')';
+			}
+			if ($method == 'email') {
+				$owner = $entity->getOwnerEntity();
+				if (is_callable('object_notifications_inria')) {
+					$owner = $entity->getOwnerEntity();
+					return array('to'      => $to_entity->guid,
+								 'from'    => $entity->container_guid,
+								 'subject' => $entity->title,
+								 'message' => $entity->description . "<br />--<br />" . $owner->name  . "<br /><br />" . $entity->getURL());
+				}else{
+					return $owner->name . ' ' . elgg_echo("bookmarks:via") . ': ' . $title . "\n\n" . $descr . "\n\n" . $entity->getURL();
+				}
+			}
+			if ($method == 'web') {
+				$owner = $entity->getOwnerEntity();
+				return $owner->name . ' ' . elgg_echo("bookmarks:via") . ': ' . $title . "\n\n" . $descr . "\n\n" . $entity->getURL();
+			}
+	
+		}
+	}
+
+	//modification de la fonction d'origine pour les groupes cachés
 	function groups_create_event_listener_inria($event, $object_type, $object)
 	{
 		global $CONFIG;

@@ -14,11 +14,10 @@
 
 <?php
 	if (isloggedin()) {
-		$usergroups = elgg_get_entities_from_relationship(array('relationship' => 'member',
-																'relationship_guid' => $_SESSION['user']->guid,
-																'inverse_relationship' => false,
-																'type' => "group",
-																'limit' => 999));
+		$usergroups = elgg_get_entities(array(	'owner_guid' => get_loggedin_userid(),
+												'type' 	=> "group",
+												'limit'	=>	10));
+
 ?>
 <script type="text/javascript">
 $(function() {
