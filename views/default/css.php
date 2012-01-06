@@ -1165,7 +1165,7 @@ p.user_menu_friends_of {
 .river_item_list {
 	//border-top:1px solid #dddddd;
 	
-	overflow:hidden;
+	//overflow:hidden;
 	
 }
 .river_item p {
