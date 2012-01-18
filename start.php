@@ -70,6 +70,8 @@
 		register_action("groups/membershipreq", false, $CONFIG->pluginspath . "theme_inria/actions/groups/membershipreq.php");
 		register_action("groups/membershiprej", false, $CONFIG->pluginspath . "theme_inria/actions/groups/membershiprej.php");
 		register_action("groups/killrequest", false, $CONFIG->pluginspath . "theme_inria/actions/groups/groupskillrequest.php");
+		unregister_plugin_hook('action', 'groups/invite', 'groups_from_members_member_invited_action');
+		register_plugin_hook('action', 'groups/invite', 'theme_inria_invite_action');
 		
 		register_plugin_hook( 'forward', 'system', 'theme_inria_forward_hook');
 		//register_plugin_hook( 'action', 'logout', 'theme_inria_logout_hook');
@@ -125,7 +127,12 @@
 		forward($redirect_url);
 		return true;
 	}
-	
+	function theme_inria_invite_action(){
+		global $CONFIG;
+		
+		return include $CONFIG->pluginspath . 'theme_inria/actions/groupsfrommembers/invite.php';
+
+	}
 	function blog_pagesetup_inria() {
 		
 		global $CONFIG;
@@ -889,7 +896,7 @@
 		$annotation = $params['entity'];
 		$to_entity = $params['to_entity'];
 		$method = $params['method'];
-		if (($annotation instanceof ElggAnnotation) && ($annotation->name == 'group_topic_post'))
+		if ($annotation instanceof ElggAnnotation)
 		{
 			$annoted_entity = get_entity($annotation->entity_guid);
 			if ($annoted_entity instanceof ElggEntity){
@@ -904,7 +911,9 @@
 							return array('to'      => $to_entity->guid,
 										 'from'    => $container->guid,
 										 'subject' => $annoted_entity->title,
-										 'message' => $annotation->value . "<br />--<br />" . $owner->name  . "<br /><br />" . $annoted_entity->getURL());
+										 'message' => elgg_view('output/mail',array('body' => $annotation->value,
+																			'signature' => $owner->guid,
+																			'ressource_link' => $annoted_entity->guid)));
 						}else{
 							return $returnvalue;
 						}
@@ -930,7 +939,9 @@
 					return array('to'      => $to_entity->guid,
 								 'from'    => $entity->container_guid,
 								 'subject' => $entity->title,
-								 'message' => $entity->description . "<br />--<br />" . $owner->name  . "<br /><br />" . $entity->getURL());
+								 'message' => elgg_view('output/mail',array('body' => $entity->description,
+																			'signature' => $owner->guid,
+																			'ressource_link' => $entity->guid)));
 				}else{
 					return $returnvalue;
 				}
@@ -964,7 +975,9 @@
 					return array('to'      => $to_entity->guid,
 								 'from'    => $entity->container_guid,
 								 'subject' => $entity->title,
-								 'message' => $msg . "<br />--<br />" . $owner->name  . "<br /><br />" . $entity->getURL());
+								 'message' => elgg_view('output/mail',array('body' => $msg,
+																			'signature' => $owner->guid,
+																			'ressource_link' => $entity->guid)));
 				}else{
 					return $returnvalue;
 				}
@@ -995,7 +1008,9 @@
 					return array('to'      => $to_entity->guid,
 								 'from'    => $entity->container_guid,
 								 'subject' => $entity->title,
-								 'message' => $entity->description . "<br />--<br />" . $owner->name  . "<br /><br />" . $entity->getURL());
+								 'message' => elgg_view('output/mail',array('body' => $entity->description,
+																			'signature' => $owner->guid,
+																			'ressource_link' => $entity->guid)));
 				}else{
 					return $owner->name . ' ' . elgg_echo("pages:via") . ': ' . $title . "\n\n" . $descr . "\n\n" . $entity->getURL();
 				}
@@ -1030,7 +1045,9 @@
 					return array('to'      => $to_entity->guid,
 								 'from'    => $entity->container_guid,
 								 'subject' => $entity->title,
-								 'message' => $entity->description . "<br />--<br />" . $owner->name  . "<br /><br />" . $entity->getURL());
+								 'message' => elgg_view('output/mail',array('body' => $entity->description,
+																			'signature' => $owner->guid,
+																			'ressource_link' => $entity->guid)));
 				}else{
 					return $owner->name . ' ' . elgg_echo("file:via") . ': ' . $entity->title . "\n\n" . $descr . "\n\n" . $entity->getURL();
 				}
@@ -1060,7 +1077,9 @@
 					return array('to'      => $to_entity->guid,
 								 'from'    => $entity->container_guid,
 								 'subject' => $entity->title,
-								 'message' => $entity->description . "<br />--<br />" . $owner->name  . "<br /><br />" . $entity->getURL());
+								 'message' => elgg_view('output/mail',array('body' => $entity->description,
+																			'signature' => $owner->guid,
+																			'ressource_link' => $entity->guid)));
 				}else{
 					return $owner->name . ' ' . elgg_echo("bookmarks:via") . ': ' . $title . "\n\n" . $descr . "\n\n" . $entity->getURL();
 				}

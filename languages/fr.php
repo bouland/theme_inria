@@ -64,6 +64,12 @@
 		'theme_inria:topbar:publications' => 'Les&nbsp;publications',
 		'theme_inria:topbar:presentation' => 'Les&nbsp;présentations',
 		
+		'theme_inria:invite:subject' => 'Invitation',
+		//$user->name, $group->name, $url
+		'theme_inria:invite:body' => 'Je vous invite à rejoindre le groupe "%s"<br /><br />
+									  <a href="%s">Cliquez ici</a> pour accepter.<br />',
+		'output:mail:hello' => "Bonjour %s,<br />",
+		'output:mail:link' => "Voir la version en ligne sur DevNet",
 	);
 					
 	add_translation("fr",$french);
