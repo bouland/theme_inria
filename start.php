@@ -86,7 +86,8 @@
 		register_elgg_event_handler('create','object','object_notifications_inria');
 		
 		unregister_elgg_event_handler('annotate','all','group_object_notifications');
-		register_elgg_event_handler('annotate','all','group_object_notifications_inria');
+		register_elgg_event_handler('create', 'annotation','annotation_notifications_inria');
+		register_plugin_hook('notify:entity:message', 'annotation', 'annotation_notify_message_inria');
 		
 		unregister_elgg_event_handler('create', 'group', 'groups_create_event_listener');
 		register_elgg_event_handler('create', 'group', 'groups_create_event_listener_inria');
@@ -839,23 +840,79 @@
 			}
 		}
 	}
-	function group_object_notifications_inria($event, $object_type, $object) {
-	
-		static $flag;
-		if (!isset($flag)) $flag = 0;
-	
-		if (is_callable('object_notifications_inria'))
-		if ($object instanceof ElggObject) {
-			if ($object->getSubtype() == 'groupforumtopic') {
-				//if ($object->countAnnotations('group_topic_post') > 0) {
-				if ($flag == 0) {
-					$flag = 1;
-					object_notifications_inria($event, $object_type, $object);
+	function annotation_notifications_inria($event, $annotation_type, $annotation) {
+		global $CONFIG, $SESSION, $NOTIFICATION_HANDLERS;
+		
+		if ($annotation instanceof ElggAnnotation){
+			$annoted_entity = get_entity($annotation->entity_guid);
+			if ($annoted_entity instanceof ElggEntity){
+				$container = get_entity($annoted_entity->container_guid);
+				if ($container instanceof ElggUser || $container instanceof ElggGroup){
+					foreach($NOTIFICATION_HANDLERS as $method => $foo) {
+						$interested_users = elgg_get_entities_from_relationship(array(
+																							'relationship' => 'notify' . $method,
+																							'relationship_guid' => $container->guid, 
+																							'inverse_relationship' => TRUE,
+																							'types' => 'user',
+																							'limit' => 99999
+						));
+						if ($interested_users && is_array($interested_users)) {
+							foreach($interested_users as $user) {
+								if ($user instanceof ElggUser && !$user->isBanned()) {
+									if (($user->guid != $SESSION['user']->guid) && has_access_to_entity($annoted_entity,$user)
+									&& $annotation->access_id != ACCESS_PRIVATE) {
+										$methodstring = trigger_plugin_hook('notify:entity:message',$annotation_type,array(
+																												'entity' => $annotation,
+																												'to_entity' => $user,
+																												'method' => $method),$string);
+										//hack INRIA
+										if(is_array($methodstring) ){
+											if (isset($methodstring['to']) && isset($methodstring['from']) && isset($methodstring['subject']) && isset($methodstring['message'])){
+												notify_user($methodstring['to'], $methodstring['from'], $methodstring['subject'], $methodstring['message'], NULL, array($method));
+											}
+										}
+										else if (!empty($methodstring) && $methodstring !== false) {
+											$methodstring = $string;
+											notify_user($user->guid,$container->guid,$descr,$methodstring,NULL,array($method));
+										}
+									}
+								}
+							}
+						}
+					}
 				}
-				//}
 			}
 		}
-	
+		
+	}
+	function annotation_notify_message_inria($hook, $annotation_type, $returnvalue, $params){
+		$annotation = $params['entity'];
+		$to_entity = $params['to_entity'];
+		$method = $params['method'];
+		if (($annotation instanceof ElggAnnotation) && ($annotation->name == 'group_topic_post'))
+		{
+			$annoted_entity = get_entity($annotation->entity_guid);
+			if ($annoted_entity instanceof ElggEntity){
+				$container = get_entity($annoted_entity->container_guid);
+				if ($container instanceof ElggUser || $container instanceof ElggGroup){
+					$owner = $annotation->getOwnerEntity();
+					if ($method == 'sms') {
+						return $owner->name . ' via comment : ' . $annotation->value;
+					}
+					if ($method == 'email') {
+						if (is_callable('object_notifications_inria')) {
+							return array('to'      => $to_entity->guid,
+										 'from'    => $container->guid,
+										 'subject' => $annoted_entity->title,
+										 'message' => $annotation->value . "<br />--<br />" . $owner->name  . "<br /><br />" . $annoted_entity->getURL());
+						}else{
+							return $returnvalue;
+						}
+					}
+				}
+			}
+		}
+		return null;
 	}
 	function blog_notify_message_inria($hook, $entity_type, $returnvalue, $params)
 	{
@@ -870,7 +927,6 @@
 			}
 			if ($method == 'email') {
 				if (is_callable('object_notifications_inria')) {
-					$owner = $entity->getOwnerEntity();
 					return array('to'      => $to_entity->guid,
 								 'from'    => $entity->container_guid,
 								 'subject' => $entity->title,
@@ -899,12 +955,12 @@
 			if (empty($msg)) $msg = get_input('topic_post');
 			if (!empty($msg)) $msg = $msg . "\n\n"; else $msg = '';
 	
-			$owner = get_entity($entity->container_guid);
+			$owner = $entity->getOwnerEntity();
+			
 			if ($method == 'sms') {
 				return elgg_echo("groupforumtopic:new") . ': ' . $url . " ({$owner->name}: {$title})";
 			}else if ($method == 'email') {
 				if (is_callable('object_notifications_inria')) {
-					$owner = $entity->getOwnerEntity();
 					return array('to'      => $to_entity->guid,
 								 'from'    => $entity->container_guid,
 								 'subject' => $entity->title,
@@ -919,6 +975,7 @@
 	}
 	function page_notify_message_inria($hook, $entity_type, $returnvalue, $params)
 	{
+		global $CONFIG;
 		$entity = $params['entity'];
 		$to_entity = $params['to_entity'];
 		$method = $params['method'];
@@ -926,28 +983,25 @@
 		{
 			$descr = $entity->description;
 			$title = $entity->title;
-			global $CONFIG;
+
 			$url = $CONFIG->wwwroot . "pg/view/" . $entity->guid;
+			$owner = $entity->getOwnerEntity();
 			if ($method == 'sms') {
-				$owner = $entity->getOwnerEntity();
+
 				return $owner->name . ' ' . elgg_echo("pages:via") . ': ' . $url . ' (' . $title . ')';
 			}
 			if ($method == 'email') {
-				$owner = $entity->getOwnerEntity();
 				if (is_callable('object_notifications_inria')) {
-					$owner = $entity->getOwnerEntity();
 					return array('to'      => $to_entity->guid,
 								 'from'    => $entity->container_guid,
 								 'subject' => $entity->title,
 								 'message' => $entity->description . "<br />--<br />" . $owner->name  . "<br /><br />" . $entity->getURL());
 				}else{
-				
 					return $owner->name . ' ' . elgg_echo("pages:via") . ': ' . $title . "\n\n" . $descr . "\n\n" . $entity->getURL();
 				}
 				
 			}
 			if ($method == 'site') {
-				$owner = $entity->getOwnerEntity();
 				return $owner->name . ' ' . elgg_echo("pages:via") . ': ' . $title . "\n\n" . $descr . "\n\n" . $entity->getURL();
 			}
 		}
@@ -955,6 +1009,7 @@
 	}
 	function file_notify_message_inria($hook, $entity_type, $returnvalue, $params)
 	{
+		global $CONFIG;
 		$entity = $params['entity'];
 		$to_entity = $params['to_entity'];
 		$method = $params['method'];
@@ -962,10 +1017,10 @@
 		{
 			$descr = $entity->description;
 			$title = $entity->title;
-			global $CONFIG;
 			$url = $CONFIG->wwwroot . "pg/view/" . $entity->guid;
+			$owner = $entity->getOwnerEntity();
 			if ($method == 'sms') {
-				$owner = $entity->getOwnerEntity();
+
 				return $owner->name . ' ' . elgg_echo("file:via") . ': ' . $url . ' (' . $title . ')';
 			}
 			if ($method == 'email') {
@@ -988,22 +1043,20 @@
 		return null;
 	}
 	function bookmarks_notify_message_inria($hook, $entity_type, $returnvalue, $params) {
+		global $CONFIG;
 		$entity = $params['entity'];
 		$to_entity = $params['to_entity'];
 		$method = $params['method'];
 		if (($entity instanceof ElggEntity) && ($entity->getSubtype() == 'bookmarks')) {
 			$descr = $entity->description;
 			$title = $entity->title;
-			global $CONFIG;
 			$url = $CONFIG->wwwroot . "pg/view/" . $entity->guid;
+			$owner = $entity->getOwnerEntity();
 			if ($method == 'sms') {
-				$owner = $entity->getOwnerEntity();
 				return $owner->name . ' ' . elgg_echo("bookmarks:via") . ': ' . $url . ' (' . $title . ')';
 			}
 			if ($method == 'email') {
-				$owner = $entity->getOwnerEntity();
 				if (is_callable('object_notifications_inria')) {
-					$owner = $entity->getOwnerEntity();
 					return array('to'      => $to_entity->guid,
 								 'from'    => $entity->container_guid,
 								 'subject' => $entity->title,
@@ -1013,7 +1066,6 @@
 				}
 			}
 			if ($method == 'web') {
-				$owner = $entity->getOwnerEntity();
 				return $owner->name . ' ' . elgg_echo("bookmarks:via") . ': ' . $title . "\n\n" . $descr . "\n\n" . $entity->getURL();
 			}
 	
