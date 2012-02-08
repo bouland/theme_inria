@@ -2,4 +2,5 @@
 *.tar.gz
 *~
 .project
+.buildpath
 graphics/aleatoire/
