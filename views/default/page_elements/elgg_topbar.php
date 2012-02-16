@@ -14,10 +14,16 @@
 
 <?php
 	if (isloggedin()) {
+		/* 
 		$usergroups = elgg_get_entities(array(	'owner_guid' => get_loggedin_userid(),
 												'type' 	=> "group",
-												'limit'	=>	10));
-
+												'limit'	=>	20));
+		*/
+		$usergroups = elgg_get_entities_from_relationship(array('relationship' => 'member',
+																'relationship_guid' => get_loggedin_userid(),
+																'inverse_relationship' => FALSE,
+																'type' 	=> "group",
+																'limit'	=>	20));
 ?>
 <script type="text/javascript">
 $(function() {
@@ -32,15 +38,19 @@ $(function() {
 				<li class="drop"><a href="<?php echo $vars['url'].'pg/profile/'.$_SESSION['user']->username; ?>" class="menuitemtools"><?php echo elgg_echo('theme_inria:topbar:me'); ?></a>
 				<ul>
 			    	<li><a href="<?php echo $vars['url'].'pg/groups/member/'.$_SESSION['user']->username; ?>" class="menuitemtools"><?php echo(elgg_echo('theme_inria:topbar:usergroups')); ?></a>
-		  			<ul class="subdrop">
-				      	<?php
-				      	foreach($usergroups as $group) {
-				      		$name = $group->name;
-				      		$name = str_replace(' ','&nbsp;',$name);
-				        	echo '<li><a href="' . $group->getURL() . '" title="' . $group->briefdescription . '">' . $name . '</a></li>';
-				      	}
-				     	?>
-	    			</ul>
+<?php
+	      	if(is_array($usergroups))
+	      	{
+				echo '<ul class="subdrop">';
+	      		foreach($usergroups as $group)
+	      		{
+		      		$name = $group->name;
+		      		$name = str_replace(' ','&nbsp;',$name);
+		        	echo '<li><a href="' . $group->getURL() . '" title="' . $group->briefdescription . '">' . $name . '</a></li>';
+	      		}   	
+	    		echo '</ul>';
+	    	}
+?>
   					</li>
   					<li><a href="<?php echo $vars['url'].'pg/friends/'.($_SESSION['user']->username); ?>"><?php echo elgg_echo('theme_inria:topbar:userfriends'); ?></a></li>
 					<li><a href="<?php echo $vars['url']; ?>pg/dashboard/"><?php echo elgg_echo('theme_inria:topbar:dashboard'); ?></a></li>
