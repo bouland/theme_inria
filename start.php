@@ -29,6 +29,9 @@
 		unregister_page_handler('blog','blog_page_handler');
 		register_page_handler('blog','blog_page_handler_inria');
 		
+		unregister_page_handler('file','file_page_handler');
+		register_page_handler('file','file_page_handler_inria');
+		
 		unregister_plugin_hook('notify:entity:message', 'object', 'blog_notify_message');
 		register_plugin_hook('notify:entity:message', 'object', 'blog_notify_message_inria');
 		
@@ -646,7 +649,7 @@
 				break;
 			case "edit":
 				set_input('blogpost', $page[1]);
-				include($CONFIG->pluginspath . "blog/edit.php");
+				include($CONFIG->pluginspath . "theme_inria/blog/edit.php");
 				break;
 			default:
 				return false;
@@ -716,6 +719,62 @@
 				break;
 		}
 	}
+	/**
+	* File page handler
+	*
+	* @param array $page Array of page elements, forwarded by the page handling mechanism
+	*/
+	function file_page_handler_inria($page) {
+	
+		global $CONFIG;
+	
+		// group usernames
+		if (substr_count($page[0], 'group:')) {
+			preg_match('/group\:([0-9]+)/i', $page[0], $matches);
+			$guid = $matches[1];
+			if ($entity = get_entity($guid)) {
+				file_url_forwarder($page);
+			}
+		}
+	
+		// user usernames
+		$user = get_user_by_username($page[0]);
+		if ($user) {
+			file_url_forwarder($page);
+		}
+	
+		switch ($page[0]) {
+			case "read":
+				set_input('guid', $page[1]);
+				//require(dirname(dirname(dirname(__FILE__))) . "/entities/index.php");
+				require($CONFIG->pluginspath . "theme_inria/file/read.php");
+				break;
+			case "owner":
+				set_input('username', $page[1]);
+				require($CONFIG->pluginspath . "file/index.php");
+				break;
+			case "friends":
+				set_input('username', $page[1]);
+				require($CONFIG->pluginspath . "file/friends.php");
+				break;
+			case "all":
+				require($CONFIG->pluginspath . "file/world.php");
+				break;
+			case "new":
+				set_input('username', $page[1]);
+				require($CONFIG->pluginspath . "file/upload.php");
+				break;
+			case "edit":
+				set_input('file_guid', $page[1]);
+				require($CONFIG->pluginspath . "file/edit.php");
+				break;
+			default:
+				return false;
+		}
+	
+		return true;
+	}
+	
 	function groups_kill_request_inria($hook_name, $entity_type, $return_value, $parameters){
 		global $CONFIG;
 		return include $CONFIG->pluginspath . 'theme_inria/groups/groupskillrequest.php';
@@ -724,7 +783,6 @@
 	{
 		$page_owner = page_owner_entity();
 		// get all groups of user in question
-		$user = get_entity($params['user_id']);
 		if ($page_owner instanceof ElggGroup) {
 			$returnvalue[$page_owner->group_acl] = elgg_echo('groups:group');
 		}
