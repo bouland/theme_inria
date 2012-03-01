@@ -14,6 +14,8 @@
 		elgg_extend_view('groups/find', 'theme_inria/login', 450);
 		elgg_extend_view('submenu/extend', 'groups/members');
 		elgg_extend_view('login/extend', 'theme_inria/login_option');
+		elgg_extend_view('metatags','theme_inria/metatags');
+		elgg_extend_view('jquery','theme_inria/jquery');
 		if (is_plugin_enabled('pages_tree')){
 			elgg_extend_view('submenu/extend', 'groups/pagesTree');
 		}

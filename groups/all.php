@@ -7,7 +7,7 @@
 
 	require_once( $_SERVER['DOCUMENT_ROOT'] . "/engine/start.php");
 
-	$limit = get_input("limit", 10);
+	$limit = get_input("limit", 30);
 	$offset = get_input("offset", 0);
 	$tag = get_input("tag");
 	$filter = get_input("filter");

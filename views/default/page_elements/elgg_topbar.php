@@ -30,7 +30,6 @@ $(function() {
 	$('ul.topbardropdownmenu').elgg_topbardropdownmenu();
 });
 </script>
-<script type="text/javascript" src="<?php echo $vars['url']; ?>mod/theme_inria/js/config.js"></script>
 <div id="elgg_topbar">
  	<div id="elgg_topbar_container_left">
 	<div class="elgg_topbar_menu">
