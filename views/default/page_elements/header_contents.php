@@ -38,8 +38,11 @@
 	}
 </script>
 <div id="banner_layout" class="<?php if (isloggedin()) {echo 'connected';}?>">
-	<div class="logo"><a href="https://www.inria.fr/"><img alt="Inria" width="195" height="100" src="<?php echo $vars['url']; ?>mod/theme_inria/graphics/logo_devnet_SB-2.jpg" /></a></div>
-    <div class="logo"><a href="<?php echo $vars['url']; ?>"><script type="text/javascript">random_image()</script></a></div>
+	<div class="logo_wrapper">
+		<div id="logo_inria"><a href="https://www.inria.fr/" title="www.inria.fr"><img alt="Devexp" height="50" src="<?php echo $vars['url']; ?>mod/theme_inria/graphics/logo_inria.jpg" /></a></div>
+	    <div id="logo_devexp"><a href="<?php echo $vars['url']; ?>" title="<?php echo elgg_echo('link:home'); ?>"><img alt="Inria" height="50" src="<?php echo $vars['url']; ?>mod/theme_inria/graphics/logo_devnet.png" /></a></div>
+    </div>
+    <div class="banner"><a href="<?php echo $vars['url']; ?>" title="<?php echo elgg_echo('link:home'); ?>"><script type="text/javascript">random_image()</script></a></div>
 <?php
 	if (isloggedin()) {
 ?>

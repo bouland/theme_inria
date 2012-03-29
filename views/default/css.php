@@ -569,12 +569,16 @@ HORIZONTAL ELGG TOPBAR RIGHT
 	width:100%;
 	background-color:#363842;
 }
-div.logo{
+div.logo_wrapper{
 	background-color:white;
 	height:auto;
 	width:auto;
 	float:left;
 	text-align:center;
+	padding:0 10px;
+}
+#logo_devexp img{
+	border-top:1px solid #CCCCCC;
 }
 .logo img{
 	display:inline;

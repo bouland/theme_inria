@@ -70,6 +70,7 @@
 									  <a href="%s">Cliquez ici</a> pour accepter.<br />',
 		'output:mail:hello' => "Bonjour %s,<br />",
 		'output:mail:link' => "Voir la version en ligne sur DevNet",
+		'link:home' => "Retour à l'accueil",
 	);
 					
 	add_translation("fr",$french);
