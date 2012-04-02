@@ -71,6 +71,13 @@
 		'output:mail:hello' => "Bonjour %s,<br />",
 		'output:mail:link' => "Voir la version en ligne sur DevNet",
 		'link:home' => "Retour à l'accueil",
+		'groups:tabs:home' => 'Accueil',
+		'groups:tabs:members' => 'Membres',
+		'groups:tabs:forum' => 'Forum',
+		'groups:tabs:blog' => 'Blog',
+		'groups:tabs:pages' => 'Wiki',
+		'groups:tabs:files' => 'Fichiers',
+		'groups:tabs:bookmarks' => 'Signets',
 	);
 					
 	add_translation("fr",$french);

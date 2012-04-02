@@ -2400,6 +2400,11 @@ div.ajax_loader {
 	background: #eeeeee;
 	margin: 0 0 0 10px;
 }
+/*
+#elgg_horizontal_tabbed_nav li:first-child {
+	margin: 0;
+}
+*/
 #elgg_horizontal_tabbed_nav a {
 	text-decoration: none;
 	display: block;

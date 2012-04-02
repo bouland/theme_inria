@@ -16,6 +16,25 @@
 		elgg_extend_view('login/extend', 'theme_inria/login_option');
 		elgg_extend_view('metatags','theme_inria/metatags');
 		elgg_extend_view('jquery','theme_inria/jquery');
+		
+		elgg_extend_view('groups/profile/tabs/menu_extend','theme_inria/group_profile_tabs_menu');
+		elgg_extend_view('groups/profile/tabs/content_extend','theme_inria/group_profile_tabs_content');
+		//forum
+		elgg_extend_view('groups/profile/tabs/menu_extend','forum/group_profile_tabs_menu');
+		elgg_extend_view('groups/profile/tabs/content_extend','forum/group_profile_tabs_content');
+		//pages
+		elgg_extend_view('groups/profile/tabs/menu_extend','pages/group_profile_tabs_menu');
+		elgg_extend_view('groups/profile/tabs/content_extend','pages/group_profile_tabs_content');
+		//blog
+		elgg_extend_view('groups/profile/tabs/menu_extend','blog/group_profile_tabs_menu');
+		elgg_extend_view('groups/profile/tabs/content_extend','blog/group_profile_tabs_content');
+		//file
+		elgg_extend_view('groups/profile/tabs/menu_extend','file/group_profile_tabs_menu');
+		elgg_extend_view('groups/profile/tabs/content_extend','file/group_profile_tabs_content');
+		//bookmarks
+		elgg_extend_view('groups/profile/tabs/menu_extend','bookmarks/group_profile_tabs_menu');
+		elgg_extend_view('groups/profile/tabs/content_extend','bookmarks/group_profile_tabs_content');
+		
 		if (is_plugin_enabled('pages_tree')){
 			elgg_extend_view('submenu/extend', 'groups/pagesTree');
 		}
@@ -92,9 +111,17 @@
 		unregister_elgg_event_handler('create','object','object_notifications');
 		register_elgg_event_handler('create','object','object_notifications_inria');
 		
+		
+		
+		//on enleve les notifications sur les forums
 		unregister_elgg_event_handler('annotate','all','group_object_notifications');
+				
+		//car on rajoute une notification pour tous les commentaires
 		register_elgg_event_handler('create', 'annotation','annotation_notifications_inria');
 		register_plugin_hook('notify:entity:message', 'annotation', 'annotation_notify_message_inria');
+		
+		// on intercepte la notfication de creation de pages car elle a une annotation qui est notifier
+		register_plugin_hook('object:notifications','object','page_object_notifications_intercept');
 		
 		unregister_elgg_event_handler('create', 'group', 'groups_create_event_listener');
 		register_elgg_event_handler('create', 'group', 'groups_create_event_listener_inria');
@@ -713,11 +740,19 @@
 				if (is_numeric($page[0])) {
 					// pg/groups/<guid>
 					set_input('group_guid', $page[0]);
+					if(isset($page[2])){
+						// pg/groups/<guid>/<name>/<tab>
+						set_input('group_tab', $page[2]);
+					}else{
+						set_input('group_tab', 'home');
+					}
 				} else {
 					// pg/groups/profile/<guid>
 					set_input('group_guid', $page[1]);
 				}
-				include($CONFIG->pluginspath . "theme_inria/groups/groupprofile.php");
+				
+				include($CONFIG->pluginspath . "theme_inria/groups/profile/tabs.php");
+				//include($CONFIG->pluginspath . "theme_inria/groups/groupprofile.php");
 				break;
 		}
 	}
@@ -1043,6 +1078,26 @@
 				}
 			}
 	
+		}
+		return null;
+	}
+	/**
+	* Intercepts the notification on group topic creation and prevents a notification from going out
+	* (because one will be sent on the annotation)
+	*
+	* @param unknown_type $hook
+	* @param unknown_type $entity_type
+	* @param unknown_type $returnvalue
+	* @param unknown_type $params
+	* @return unknown
+	*/
+	function page_object_notifications_intercept($hook, $entity_type, $returnvalue, $params) {
+		if (isset($params)) {
+			if ($params['event'] == 'create' && $params['object'] instanceof ElggObject) {
+				if ($params['object']->getSubtype() == 'page_top' || $params['object']->getSubtype() == 'page') {
+					return true;
+				}
+			}
 		}
 		return null;
 	}

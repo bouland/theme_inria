@@ -21,7 +21,9 @@
 	margin:0 0 20px;
 	padding:5px 10px;
 }
-
+#group_tab_wrapper{
+	padding: 10px 0;
+}
 #topic_posts #content_area_group_title h2 {
 	margin:0 0 0 0;
 }
