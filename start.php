@@ -36,57 +36,58 @@
 			elgg_extend_view('submenu/extend', 'groups/pagesTree');
 		}
 		
-		
-			
-		unregister_page_handler('pages','pages_page_handler');
-		register_page_handler('pages','pages_page_handler_inria');
-		
 		unregister_page_handler('groups','groups_page_handler');
 		register_page_handler('groups','groups_page_handler_inria');
+
+		unregister_elgg_event_handler('pagesetup','system','blog_pagesetup');
+		unregister_elgg_event_handler('pagesetup','system','pages_submenus');
+		unregister_elgg_event_handler('pagesetup','system','groups_submenus');
+		unregister_elgg_event_handler('pagesetup','system','file_submenus');
+		unregister_elgg_event_handler('pagesetup','system','bookmarks_pagesetup');
+		unregister_elgg_event_handler('pagesetup','system','event_calendar_pagesetup');
+		unregister_elgg_event_handler('pagesetup','system','tidypics_submenus');
 		
 		unregister_page_handler('blog','blog_page_handler');
-		register_page_handler('blog','blog_page_handler_inria');
-		
-		unregister_page_handler('bookmarks','bookmarks_page_handler');
-		register_page_handler('bookmarks','bookmarks_page_handler_inria');
-		
+		unregister_page_handler('pages','pages_page_handler');
+		unregister_page_handler('forum','forum_page_handler');
 		unregister_page_handler('file','file_page_handler');
-		register_page_handler('file','file_page_handler_inria');
+		unregister_page_handler('bookmarks','bookmarks_page_handler');
 		
 		unregister_plugin_hook('notify:entity:message', 'object', 'blog_notify_message');
-		register_plugin_hook('notify:entity:message', 'object', 'blog_notify_message_inria');
+		unregister_plugin_hook('notify:entity:message', 'object', 'page_notify_message');
+		unregister_plugin_hook('notify:entity:message', 'object', 'groupforumtopic_notify_message');
+		unregister_plugin_hook('notify:entity:message', 'object', 'bookmarks_notify_message');
+		unregister_plugin_hook('notify:entity:message', 'object', 'file_notify_message');
 		
-		unregister_elgg_event_handler('pagesetup','system','blog_pagesetup');
+		//blog
+		register_page_handler('blog','blog_page_handler_inria');
+		register_plugin_hook('notify:entity:message', 'object', 'blog_notify_message_inria');
 		register_elgg_event_handler('pagesetup','system','blog_pagesetup_inria');
 		
-		unregister_plugin_hook('notify:entity:message', 'object', 'file_notify_message');
-		register_plugin_hook('notify:entity:message', 'object', 'file_notify_message_inria');
-		
-		unregister_elgg_event_handler('pagesetup','system','file_submenus');
-		register_elgg_event_handler('pagesetup','system','file_submenus_inria');
-	
-		unregister_elgg_event_handler('pagesetup','system','groups_submenus');
-		register_elgg_event_handler('pagesetup','system','groups_submenus_inria');
-		
-		unregister_plugin_hook('notify:entity:message', 'object', 'groupforumtopic_notify_message');
-		register_plugin_hook('notify:entity:message', 'object', 'groupforumtopic_notify_message_inria');
-
-		unregister_plugin_hook('notify:entity:message', 'object', 'page_notify_message');
+		//Pages
+		register_page_handler('pages','pages_page_handler_inria');
 		register_plugin_hook('notify:entity:message', 'object', 'page_notify_message_inria');
-		
-		unregister_elgg_event_handler('pagesetup','system','pages_submenus');
 		register_elgg_event_handler('pagesetup','system','pages_submenus_inria');
 		
-		unregister_elgg_event_handler('pagesetup','system','event_calendar_pagesetup');
-    	register_elgg_event_handler('pagesetup','system','event_calendar_pagesetup_inria');
+		//Forum
+		register_page_handler('forum','forum_page_handler_inria');
+		register_plugin_hook('notify:entity:message', 'object', 'groupforumtopic_notify_message_inria');
+		register_elgg_event_handler('pagesetup','system','groups_submenus_inria');
+		
+		//File
+		register_page_handler('file','file_page_handler_inria');
+		register_plugin_hook('notify:entity:message', 'object', 'file_notify_message_inria');
+		register_elgg_event_handler('pagesetup','system','file_submenus_inria');
+		
+		//Bookmarks
+		register_page_handler('bookmarks','bookmarks_page_handler_inria');
+		register_plugin_hook('notify:entity:message', 'object', 'bookmarks_notify_message_inria');
+		register_elgg_event_handler('pagesetup','system','bookmarks_pagesetup_inria');
+		
+		//Event Calendar
+		register_elgg_event_handler('pagesetup','system','event_calendar_pagesetup_inria');
     	
-    	unregister_plugin_hook('notify:entity:message', 'object', 'bookmarks_notify_message');
-    	register_plugin_hook('notify:entity:message', 'object', 'bookmarks_notify_message_inria');
-    	
-    	unregister_elgg_event_handler('pagesetup','system','bookmarks_pagesetup');
-    	register_elgg_event_handler('pagesetup','system','bookmarks_pagesetup_inria');
-	
-		unregister_elgg_event_handler('pagesetup','system','tidypics_submenus');
+    	//tidypics Album Photos
 		register_elgg_event_handler('pagesetup','system','tidypics_submenus_inria');	
 		
 
@@ -94,6 +95,7 @@
 		register_action("groups/membershipreq", false, $CONFIG->pluginspath . "theme_inria/actions/groups/membershipreq.php");
 		register_action("groups/membershiprej", false, $CONFIG->pluginspath . "theme_inria/actions/groups/membershiprej.php");
 		register_action("groups/killrequest", false, $CONFIG->pluginspath . "theme_inria/actions/groups/groupskillrequest.php");
+		
 		unregister_plugin_hook('action', 'groups/invite', 'groups_from_members_member_invited_action');
 		register_plugin_hook('action', 'groups/invite', 'theme_inria_invite_action');
 		
@@ -202,30 +204,13 @@
 		$page_owner = page_owner_entity();
 		
 		// Group submenu option	
-			if ($page_owner instanceof ElggGroup && get_context() == "groups") {
-    			if($page_owner->file_enable != "no"){ 
-				    //add_submenu_item(sprintf(elgg_echo("file:group"),$page_owner->name), $CONFIG->wwwroot . "pg/file/owner/" . $page_owner->username);
-					if (can_write_to_container($_SESSION['guid'], page_owner()) && isloggedin())
-						add_submenu_item(elgg_echo('file:upload'), $CONFIG->wwwroot . "pg/file/new/". $page_owner->username);
-	    				
-			    }
-			}
-			
-		// General submenu options
-		
-			if (get_context() == "file") {
-				if ((page_owner() == $_SESSION['guid'] || !page_owner()) && isloggedin()) {
-					add_submenu_item(sprintf(elgg_echo("file:yours"),$page_owner->name), $CONFIG->wwwroot . "pg/file/owner/" . $page_owner->username);
-					add_submenu_item(sprintf(elgg_echo('file:yours:friends'),$page_owner->name), $CONFIG->wwwroot . "pg/file/friends/". $page_owner->username);
-				} else if (page_owner()) {
-					add_submenu_item(sprintf(elgg_echo("file:user"),$page_owner->name), $CONFIG->wwwroot . "pg/file/owner/" . $page_owner->username);
-					if ($page_owner instanceof ElggUser) // This one's for users, not groups
-						add_submenu_item(sprintf(elgg_echo('file:friends'),$page_owner->name), $CONFIG->wwwroot . "pg/file/friends/". $page_owner->username);
-				}
-				add_submenu_item(elgg_echo('file:all'), $CONFIG->wwwroot . "pg/file/all/");
+		if ($page_owner instanceof ElggGroup && get_context() == "groups") {
+    		if($page_owner->file_enable != "no"){ 
+			    //add_submenu_item(sprintf(elgg_echo("file:group"),$page_owner->name), $CONFIG->wwwroot . "pg/file/owner/" . $page_owner->username);
 				if (can_write_to_container($_SESSION['guid'], page_owner()) && isloggedin())
-					add_submenu_item(elgg_echo('file:upload'), $CONFIG->wwwroot . "pg/file/new/". $page_owner->username);
+					add_submenu_item(elgg_echo('file:upload'), $CONFIG->wwwroot . "pg/file/new/". $page_owner->username);			
 			}
+		}
 		
 	}
 	function groups_submenus_inria() {
@@ -352,48 +337,11 @@
 		global $CONFIG;
 	
 		$page_owner = page_owner_entity();
-	
-		//add submenu options
-		if (get_context() == "bookmarks") {
-	
-			if (isloggedin()) {
-				// link to add bookmark form
-				if ($page_owner instanceof ElggGroup) {
-					if ($page_owner->isMember(get_loggedin_user())) {
-						add_submenu_item(elgg_echo('bookmarks:add'), $CONFIG->wwwroot."pg/bookmarks/add/" . $page_owner->username);
-					}
-				} else {
-					add_submenu_item(elgg_echo('bookmarks:add'), $CONFIG->wwwroot."pg/bookmarks/add/" . $_SESSION['user']->username);
-					add_submenu_item(elgg_echo('bookmarks:inbox'),$CONFIG->wwwroot."pg/bookmarks/inbox/" . $_SESSION['user']->username);
-				}
-				if (page_owner()) {
-					add_submenu_item(sprintf(elgg_echo('bookmarks:read'), $page_owner->name),$CONFIG->wwwroot."pg/bookmarks/owner/" . $page_owner->username);
-				}
-				if (!$page_owner instanceof ElggGroup) {
-					add_submenu_item(elgg_echo('bookmarks:friends'),$CONFIG->wwwroot."pg/bookmarks/friends/" . $_SESSION['user']->username);
-				}
-			}
-	
-			if (!$page_owner instanceof ElggGroup) {
-				add_submenu_item(elgg_echo('bookmarks:everyone'),$CONFIG->wwwroot."pg/bookmarks/all/");
-			}
-			
-			// Bookmarklet
-			if ((isloggedin()) && (page_owner()) && (can_write_to_container(0, page_owner()))) {
-	
-				$bmtext = elgg_echo('bookmarks:bookmarklet');
-				if ($page_owner instanceof ElggGroup) {
-					$bmtext = elgg_echo('bookmarks:bookmarklet:group');
-				}
-				add_submenu_item($bmtext, $CONFIG->wwwroot . "pg/bookmarks/bookmarklet/{$page_owner->username}/");
-			}
-	
-		}
-	
+		
 		if ($page_owner instanceof ElggGroup && get_context() == 'groups') {
 			if ($page_owner->bookmarks_enable != "no") {
 				//add_submenu_item(sprintf(elgg_echo("bookmarks:group"),$page_owner->name), $CONFIG->wwwroot . "pg/bookmarks/owner/" . $page_owner->username);
-				add_submenu_item(elgg_echo('theme_inria:bookmarks:group:new'), $CONFIG->wwwroot."pg/bookmarks/add/" . $page_owner->username);
+				add_submenu_item(elgg_echo('bookmarks:add'), $CONFIG->wwwroot."pg/bookmarks/add/" . $page_owner->username);
 			}
 		}
 	
@@ -553,36 +501,16 @@
     				if (isset($page[1])) {
 						$guid = (int)$page[1];
     					set_input('page_guid', $guid);
-    					
-						$entity = get_entity($guid);
-						add_submenu_item(elgg_echo('pages:label:view'), $CONFIG->url . "pg/pages/view/$guid", 'pageslinks');
-						// add_submenu_item(elgg_echo('pages:user'), $CONFIG->wwwroot . "pg/pages/owned/" . $_SESSION['user']->username, 'pageslinksgeneral');
-						if (($entity) && ($entity->canEdit())) {
-							add_submenu_item(elgg_echo('pages:label:edit'), $CONFIG->url . "pg/pages/edit/$guid", 'pagesactions');
-						}
-						add_submenu_item(elgg_echo('pages:label:history'), $CONFIG->url . "pg/pages/history/$guid", 'pageslinks');
 					}
-
     				include($CONFIG->pluginspath . "theme_inria/pages/edit.php");
     			break;
     			case "view":
-    				
     				if (isset($page[1])) {
 						$guid = (int)$page[1];
     					set_input('page_guid', $guid);
 
 						elgg_extend_view('metatags','pages/metatags');
-    					
-						$entity = get_entity($guid);
-						
-						//add_submenu_item(elgg_echo('pages:label:view'), $CONFIG->url . "pg/pages/view/$guid", 'pageslinks');
-						if (($entity) && ($entity->canEdit())) {
-							add_submenu_item(elgg_echo('pages:new'), $CONFIG->url . "pg/pages/new/?container_guid=" . $entity->container_guid , 'pagesactions');
-							add_submenu_item(elgg_echo('pages:label:edit'), $CONFIG->url . "pg/pages/edit/$guid", 'pagesactions');
-						}
-						add_submenu_item(elgg_echo('pages:label:history'), $CONFIG->url . "pg/pages/history/$guid", 'pagesactions');
-					}
-
+    				}
     				include($CONFIG->pluginspath . "theme_inria/pages/view.php");
     			break;   
     			case "history":
@@ -592,15 +520,8 @@
 
 						elgg_extend_view('metatags','pages/metatags');
     					
-						$entity = get_entity($guid);
-						add_submenu_item(elgg_echo('pages:label:view'), $CONFIG->url . "pg/pages/view/$guid", 'pageslinks');
-						if (($entity) && ($entity->canEdit())) {
-							add_submenu_item(elgg_echo('pages:label:edit'), $CONFIG->url . "pg/pages/edit/$guid", 'pagesactions');
-						}
-						add_submenu_item(elgg_echo('pages:label:history'), $CONFIG->url . "pg/pages/history/$guid", 'pageslinks');
 					}
-
-    				include($CONFIG->pluginspath . "pages/history.php");
+    				include($CONFIG->pluginspath . "theme_inria/pages/history.php");
     			break; 				
     			default:
     				include($CONFIG->pluginspath . "pages/new.php");
@@ -706,6 +627,7 @@
 				break;
 			case "forum":
 				set_input('group_guid', $page[1]);
+				set_context('forum');
 				include($CONFIG->pluginspath . "theme_inria/groups/forum.php");
 				break;
 			case "membershipreq":
@@ -724,6 +646,24 @@
 				
 				include($CONFIG->pluginspath . "theme_inria/groups/profile/tabs.php");
 				//include($CONFIG->pluginspath . "theme_inria/groups/groupprofile.php");
+				break;
+		}
+	}
+	function forum_page_handler_inria($page) {
+		global $CONFIG;
+	
+		switch ($page[0]) {
+			case 'new':
+				set_input('group_guid', $page[1]);
+				include($CONFIG->pluginspath . "theme_inria/forum/addtopic.php");
+				break;
+			case 'edit':
+				set_input('topic', $page[1]);
+				include($CONFIG->pluginspath . "theme_inria/forum/edittopic.php");
+				break;
+			case "topic":
+				set_input('topic', $page[1]);
+				include($CONFIG->pluginspath . "theme_inria/forum/topicposts.php");
 				break;
 		}
 	}
@@ -746,7 +686,7 @@
 	
 		switch ($page[0]) {
 			case "read":
-				set_input('bookmarks_guid', $page[1]);
+				set_input('bookmark_guid', $page[1]);
 				require($CONFIG->pluginspath . "theme_inria/bookmarks/read.php");
 				break;
 			case "friends":

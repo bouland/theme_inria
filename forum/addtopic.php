@@ -7,7 +7,7 @@
 	 */
 
 	// Load Elgg engine
-		require_once(dirname(dirname(dirname(__FILE__))) . "/engine/start.php");
+		require_once($_SERVER['DOCUMENT_ROOT'] . "/engine/start.php");
 		
 		gatekeeper();
 		
@@ -15,8 +15,11 @@
 		
 		if (!(page_owner_entity() instanceof ElggGroup)) forward();
 		
+		//theme_inria change
+		$area2 = elgg_view('profile/tabs/menu', array('entity' => page_owner_entity(), 'tab_select' => 'forum'));
+		
 	// sort the display
-	    $area2 = elgg_view("forms/forums/addtopic");
+	    $area2 .= elgg_view("forms/forums/addtopic");
 	    $body = elgg_view_layout('two_column_left_sidebar',$area1, $area2);
 		
 	// Display page

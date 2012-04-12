@@ -19,7 +19,11 @@
 	} else {
 		$title = sprintf(elgg_echo("file:user"),page_owner_entity()->name);
 	}
-			
+
+	if (can_write_to_container()){
+		add_submenu_item(elgg_echo('file:upload'), $CONFIG->url . "pg/file/new/". page_owner_entity()->username, 'fileactions2');
+	}
+	
 	//theme_inria change
 	$area2 = elgg_view('profile/tabs/menu', array('entity' => page_owner_entity(), 'tab_select' => 'file'));
 	//$area2 .= elgg_view_title($title);

@@ -20,7 +20,16 @@ if ($entity = get_entity($guid)) {
 	} else {
 		set_page_owner($entity->owner_guid);
 	}
-
+	
+	if ( $entity->canEdit() ) {
+		add_submenu_item(elgg_echo('file:edit'), $CONFIG->url . "pg/file/edit/{$guid}", 'fileactions');
+		$delete_url = elgg_add_action_tokens_to_url("{$CONFIG->url}action/file/delete?file={$guid}");
+		add_submenu_item(elgg_echo('file:delete'), $delete_url, 'fileactions', true);
+	}
+	if (can_write_to_container()){
+		add_submenu_item(elgg_echo('file:upload'), $CONFIG->url . "pg/file/new/". page_owner_entity()->username, 'fileactions2');
+	}
+	
 	// Set the body to be the full view of the entity, and the title to be its title
 	if ($entity instanceof ElggObject) {
 		$title = $entity->title;

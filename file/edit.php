@@ -29,7 +29,12 @@ if (!$page_owner) {
 if (!$file->canEdit()) {
 	forward();
 }
+$delete_url = elgg_add_action_tokens_to_url("{$CONFIG->url}action/file/delete?file={$guid}");
+add_submenu_item(elgg_echo('file:delete'), $delete_url, 'fileactions', true);
 
+if (can_write_to_container()){
+	add_submenu_item(elgg_echo('file:upload'), $CONFIG->url . "pg/file/new/". page_owner_entity()->username, 'fileactions2');
+}
 $title = elgg_echo('file:edit');
 
 //theme_inria change

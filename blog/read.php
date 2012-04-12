@@ -29,7 +29,7 @@
 		if ( can_write_to_container() ){
 			add_submenu_item(elgg_echo('blog:editpost'),$CONFIG->url .  "pg/blog/edit/" . $post, 'bookmarksactions');
 			add_submenu_item(elgg_echo('blog:delpost'), $CONFIG->url .  "action/blog/delete?blogpost=" . $post, 'bookmarksactions', true);
-			add_submenu_item(elgg_echo('blog:addpost'), $CONFIG->url . 'pg/blog/new/' .page_owner_entity()->username, 'bookmarksactions');
+			add_submenu_item(elgg_echo('blog:addpost'), $CONFIG->url . 'pg/blog/new/' .page_owner_entity()->username, 'bookmarksactions2');
 		}
 		$page_owner = page_owner_entity();
 				

@@ -6,7 +6,8 @@
 	 */
 
 	require_once( $_SERVER['DOCUMENT_ROOT'] . "/engine/start.php");
-
+	global $CONFIG;
+	
 	$page_guid = get_input('page_guid');
 	set_context('pages');
 
@@ -23,15 +24,19 @@
 		set_page_owner($pages->owner_guid);
 	}
 
-	global $CONFIG;
 	// add_submenu_item(sprintf(elgg_echo("pages:user"), page_owner_entity()->name), $CONFIG->url . "pg/pages/owned/" . page_owner_entity()->username, 'pageslinksgeneral');
-
-	if (pages_has_full_permissions(page_owner_entity())) {
+	
+	//add_submenu_item(elgg_echo('pages:label:view'), $CONFIG->url . "pg/pages/view/$guid", 'pageslinks');
+	add_submenu_item(elgg_echo('pages:label:history'), $CONFIG->url . "pg/pages/history/$guid", 'pagesactions');
+	if (($pages) && ($pages->canEdit())) {
+		add_submenu_item(elgg_echo('pages:label:edit'), $CONFIG->url . "pg/pages/edit/$guid", 'pagesactions');
 		add_submenu_item(elgg_echo('pages:newchild'),"{$CONFIG->wwwroot}pg/pages/new/?parent_guid={$pages->getGUID()}&container_guid=" . page_owner(), 'pagesactions');
 		$delete_url = elgg_add_action_tokens_to_url("{$CONFIG->wwwroot}action/pages/delete?page={$pages->getGUID()}");
 		add_submenu_item(elgg_echo('pages:delete'), $delete_url, 'pagesactions', true);
 	}
-
+	if (can_write_to_container()) {
+		add_submenu_item(elgg_echo('pages:new'), $CONFIG->url . "pg/pages/new/?container_guid=" . $entity->container_guid , 'pagesactions2');
+	}
 	//if the page has a parent, get it
 	if($parent_page = get_entity(get_input("page_guid")))
 		$parent = $parent_page;

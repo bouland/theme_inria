@@ -20,7 +20,9 @@
 		}
 		if ($page_owner instanceof ElggGroup)
 			$container = $page_owner->guid;
-			
+		
+		add_submenu_item(elgg_echo('bookmarks:bookmarklet:group'), $CONFIG->wwwroot . "pg/bookmarks/bookmarklet/{$page_owner->username}/", 'bookmarslinks');
+		
 		//theme_inria change
 		$area2 = elgg_view('profile/tabs/menu', array('entity' => page_owner_entity(), 'tab_select' => 'bookmarks'));
 

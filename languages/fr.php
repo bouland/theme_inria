@@ -45,7 +45,7 @@
 	
 		'theme_inria:event_calendar:groups' => 'Evénements du groupe',
 		'theme_inria:groups:discussions' => 'Discussions du groupe',
-		'theme_inria:bookmarks:group:new' => 'Créer un signet',
+
 		'theme_inria:category' => 'catégorie',
 	
 		'theme_inria:membershipreq:title' => "Notifier votre refus d'adhésion",
@@ -85,8 +85,15 @@
 		
 		'bookmarks:edit' => 'Modifier ce signet',
 		'bookmarks:delete' => 'Supprimer ce signet',
+		'bookmarks:add' => 'Partager un nouveau signet',
 		
 		'pages:new' => 'Ajouter une nouvelle page',
+		
+		'groups:deltopic' => 'Supprimer la discussion',
+		
+		'file:edit' => 'Modifer le fichier',
+		'file:delete' => 'Supprimer le fichier',
+		'file:upload' => 'Partager un nouveau fichier',
 		
 	);
 					
