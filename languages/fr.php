@@ -74,10 +74,20 @@
 		'groups:tabs:home' => 'Accueil',
 		'groups:tabs:members' => 'Membres',
 		'groups:tabs:forum' => 'Forum',
-		'groups:tabs:blog' => 'Blog',
+		'groups:tabs:blog' => 'News',
 		'groups:tabs:pages' => 'Wiki',
 		'groups:tabs:files' => 'Fichiers',
 		'groups:tabs:bookmarks' => 'Signets',
+		
+		'blog:addpost' => "Ajouter une nouvelle news",
+		'blog:editpost' => "Editer cette news",
+		'blog:delpost' => "Supprimer cette news",
+		
+		'bookmarks:edit' => 'Modifier ce signet',
+		'bookmarks:delete' => 'Supprimer ce signet',
+		
+		'pages:new' => 'Ajouter une nouvelle page',
+		
 	);
 					
 	add_translation("fr",$french);

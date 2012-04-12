@@ -6,5 +6,5 @@
 	 
 ?>
 <div id="group_tab_wrapper">
-<?php echo elgg_view('groups/profile/tabs/content_extend', $vars); ?>
+<?php echo elgg_view('profile/tabs/content_extend', $vars); ?>
 </div>

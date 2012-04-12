@@ -5,7 +5,6 @@
 	 * @package ElggGroups
 	 */
 	$group_guid = get_input('group_guid');
-	$group_tab = get_input('group_tab');
 	set_context('groups');
 	
 	global $autofeed;
@@ -21,9 +20,10 @@
 		
 		//$groupaccess = group_gatekeeper(false);
 		
-		$area2 = elgg_view('groups/profile/tabs/menu', array('entity' => $group, 'group_tab' => $group_tab));
+		$area2 = elgg_view('profile/tabs/menu', array('entity' => $group, 'tab_select' => 'home'));
 		
-		$area2 .= elgg_view('groups/profile/tabs/content', array('entity' => $group, 'group_tab' => $group_tab));
+		$area2 .= 	elgg_view('group/group', array('entity' => $group, 'user' => $_SESSION['user'], 'full' => true));
+		
 		
 		//elgg_view('group/group', array('entity' => $group, 'user' => $_SESSION['user'], 'full' => true));
 

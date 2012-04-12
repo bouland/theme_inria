@@ -2522,3 +2522,9 @@ margin:5px 0;
 .submenu_group_wrapper{
 	padding : 0 10px;
 }
+#topic_header{
+	padding: 20px 0;
+}
+#topic_title{
+	margin-right:2.4em;
+}

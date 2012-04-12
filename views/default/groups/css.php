@@ -11,6 +11,7 @@
 	 */
 
 ?>
+/*
 #content_area_group_title {
 	background:url(<?php echo $vars['url'].'mod/theme_inria/graphics/categorie_bar.png'?>) repeat-y right top;
 }
@@ -21,6 +22,7 @@
 	margin:0 0 20px;
 	padding:5px 10px;
 }
+*/
 #group_tab_wrapper{
 	padding: 10px 0;
 }

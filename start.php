@@ -12,28 +12,25 @@
 		global $CONFIG;
 		elgg_extend_view('riverdashboard/sitemessage', 'theme_inria/login', 450);
 		elgg_extend_view('groups/find', 'theme_inria/login', 450);
-		elgg_extend_view('submenu/extend', 'groups/members');
+		//elgg_extend_view('submenu/extend', 'groups/members');
 		elgg_extend_view('login/extend', 'theme_inria/login_option');
 		elgg_extend_view('metatags','theme_inria/metatags');
 		elgg_extend_view('jquery','theme_inria/jquery');
-		
-		elgg_extend_view('groups/profile/tabs/menu_extend','theme_inria/group_profile_tabs_menu');
-		elgg_extend_view('groups/profile/tabs/content_extend','theme_inria/group_profile_tabs_content');
-		//forum
-		elgg_extend_view('groups/profile/tabs/menu_extend','forum/group_profile_tabs_menu');
-		elgg_extend_view('groups/profile/tabs/content_extend','forum/group_profile_tabs_content');
-		//pages
-		elgg_extend_view('groups/profile/tabs/menu_extend','pages/group_profile_tabs_menu');
-		elgg_extend_view('groups/profile/tabs/content_extend','pages/group_profile_tabs_content');
+		//home
+		elgg_extend_view('profile/tabs/menu_extend','theme_inria/group_profile_tabs_menu');
 		//blog
-		elgg_extend_view('groups/profile/tabs/menu_extend','blog/group_profile_tabs_menu');
-		elgg_extend_view('groups/profile/tabs/content_extend','blog/group_profile_tabs_content');
+		elgg_extend_view('profile/tabs/menu_extend','blog/group_profile_tabs_menu');
+		//pages
+		elgg_extend_view('profile/tabs/menu_extend','pages/group_profile_tabs_menu');
+		//forum
+		elgg_extend_view('profile/tabs/menu_extend','forum/group_profile_tabs_menu');
 		//file
-		elgg_extend_view('groups/profile/tabs/menu_extend','file/group_profile_tabs_menu');
-		elgg_extend_view('groups/profile/tabs/content_extend','file/group_profile_tabs_content');
+		elgg_extend_view('profile/tabs/menu_extend','file/group_profile_tabs_menu');
 		//bookmarks
-		elgg_extend_view('groups/profile/tabs/menu_extend','bookmarks/group_profile_tabs_menu');
-		elgg_extend_view('groups/profile/tabs/content_extend','bookmarks/group_profile_tabs_content');
+		elgg_extend_view('profile/tabs/menu_extend','bookmarks/group_profile_tabs_menu');
+		//members
+		elgg_extend_view('profile/tabs/menu_extend','members/group_profile_tabs_menu');
+		
 		
 		if (is_plugin_enabled('pages_tree')){
 			elgg_extend_view('submenu/extend', 'groups/pagesTree');
@@ -49,6 +46,9 @@
 		
 		unregister_page_handler('blog','blog_page_handler');
 		register_page_handler('blog','blog_page_handler_inria');
+		
+		unregister_page_handler('bookmarks','bookmarks_page_handler');
+		register_page_handler('bookmarks','bookmarks_page_handler_inria');
 		
 		unregister_page_handler('file','file_page_handler');
 		register_page_handler('file','file_page_handler_inria');
@@ -171,26 +171,6 @@
 
 		//add submenu options
 			if (get_context() == "blog") {
-				$page_owner = page_owner_entity();
-					
-				if ((page_owner() == $_SESSION['guid'] || !page_owner()) && isloggedin()) {
-					add_submenu_item(elgg_echo('blog:your'),$CONFIG->wwwroot."pg/blog/owner/" . $_SESSION['user']->username);
-					add_submenu_item(elgg_echo('blog:friends'),$CONFIG->wwwroot."pg/blog/friends/" . $_SESSION['user']->username);
-					add_submenu_item(elgg_echo('blog:everyone'),$CONFIG->wwwroot."pg/blog/all/");
-					
-				} else if (page_owner()) {
-					add_submenu_item(sprintf(elgg_echo('blog:user'),$page_owner->name),$CONFIG->wwwroot."pg/blog/owner/" . $page_owner->username);
-					if ($page_owner instanceof ElggUser) { // Sorry groups, this isn't for you.
-						add_submenu_item(sprintf(elgg_echo('blog:user:friends'),$page_owner->name),$CONFIG->wwwroot."pg/blog/friends/" . $page_owner->username);
-					}
-					add_submenu_item(elgg_echo('blog:everyone'),$CONFIG->wwwroot."pg/blog/all/");
-				} else {
-					add_submenu_item(elgg_echo('blog:everyone'),$CONFIG->wwwroot."pg/blog/all/");
-				}
-				
-				if (can_write_to_container(0, page_owner()) && isloggedin())
-					add_submenu_item(elgg_echo('blog:addpost'),$CONFIG->wwwroot."pg/blog/new/{$page_owner->username}/");
-					
 				if (!defined('everyoneblog') && page_owner()) {
 					
 					if ($dates = get_entity_dates('object','blog',page_owner(),0,'time_created desc')) {
@@ -205,13 +185,10 @@
 					
 				}
 				
-			}
-			
-		// Group submenu
-			$page_owner = page_owner_entity();
-			
-			if ($page_owner instanceof ElggGroup && get_context() == 'groups') {
-    			if($page_owner->blog_enable != "no"){
+			}elseif (get_context() == 'groups') {
+				// Group submenu
+				$page_owner = page_owner_entity();
+    			if($page_owner instanceof ElggGroup && $page_owner->blog_enable != "no"){
     				//INRIA change
     				if (can_write_to_container(0, page_owner()) && isloggedin())
 					add_submenu_item(elgg_echo('blog:addpost'),$CONFIG->wwwroot."pg/blog/new/{$page_owner->username}/");
@@ -255,51 +232,51 @@
 
 		global $CONFIG;
 
-		// Get the page owner entity
-			$page_owner = page_owner_entity();
+	// Get the page owner entity
+		$page_owner = page_owner_entity();
 
-		// Submenu items for all group pages
-			if ($page_owner instanceof ElggGroup && get_context() == 'groups') {
-				if (isloggedin()) {
-					if ($page_owner->canEdit()) {
-						add_submenu_item(elgg_echo('groups:edit'),$CONFIG->wwwroot . "pg/groups/edit/" . $page_owner->getGUID(), 'groupsactions');
-						add_submenu_item(elgg_echo('groups:invite'),$CONFIG->wwwroot . "pg/groups/invite/{$page_owner->getGUID()}", 'groupsactions');
-						if (!$page_owner->isPublicMembership())
-							add_submenu_item(elgg_echo('groups:membershiprequests'),$CONFIG->wwwroot . "pg/groups/membershipreq/{$page_owner->getGUID()}", 'groupsactions');
+	// Submenu items for all group pages
+		if ($page_owner instanceof ElggGroup && get_context() == 'groups') {
+			if (isloggedin()) {
+				if ($page_owner->canEdit()) {
+					add_submenu_item(elgg_echo('groups:edit'),$CONFIG->wwwroot . "pg/groups/edit/" . $page_owner->getGUID(), 'groupsactions');
+					add_submenu_item(elgg_echo('groups:invite'),$CONFIG->wwwroot . "pg/groups/invite/{$page_owner->getGUID()}", 'groupsactions');
+					if (!$page_owner->isPublicMembership())
+						add_submenu_item(elgg_echo('groups:membershiprequests'),$CONFIG->wwwroot . "pg/groups/membershipreq/{$page_owner->getGUID()}", 'groupsactions');
+				}
+				if ($page_owner->isMember($_SESSION['user'])) {
+					if ($page_owner->getOwner() != $_SESSION['guid']) {
+						$url = elgg_add_action_tokens_to_url($CONFIG->wwwroot . "action/groups/leave?group_guid=" . $page_owner->getGUID());
+						add_submenu_item(elgg_echo('groups:leave'), $url, 'groupsactions');
 					}
-					if ($page_owner->isMember($_SESSION['user'])) {
-						if ($page_owner->getOwner() != $_SESSION['guid']) {
-							$url = elgg_add_action_tokens_to_url($CONFIG->wwwroot . "action/groups/leave?group_guid=" . $page_owner->getGUID());
-							add_submenu_item(elgg_echo('groups:leave'), $url, 'groupsactions');
-						}
+				} else {
+					if ($page_owner->isPublicMembership()) {
+						$url = elgg_add_action_tokens_to_url($CONFIG->wwwroot . "action/groups/join?group_guid={$page_owner->getGUID()}");
+						add_submenu_item(elgg_echo('groups:join'), $url, 'groupsactions');
 					} else {
-						if ($page_owner->isPublicMembership()) {
-							$url = elgg_add_action_tokens_to_url($CONFIG->wwwroot . "action/groups/join?group_guid={$page_owner->getGUID()}");
-							add_submenu_item(elgg_echo('groups:join'), $url, 'groupsactions');
-						} else {
-							$url = elgg_add_action_tokens_to_url($CONFIG->wwwroot . "action/groups/joinrequest?group_guid={$page_owner->getGUID()}");
-							add_submenu_item(elgg_echo('groups:joinrequest'), $url, 'groupsactions');
-						}
+						$url = elgg_add_action_tokens_to_url($CONFIG->wwwroot . "action/groups/joinrequest?group_guid={$page_owner->getGUID()}");
+						add_submenu_item(elgg_echo('groups:joinrequest'), $url, 'groupsactions');
 					}
 				}
-
-				if($page_owner->forum_enable != "no"){
-					if (can_write_to_container(0, page_owner()) && isloggedin())
-						add_submenu_item(elgg_echo('groups:addtopic'),$CONFIG->wwwroot . "pg/forum/new/{$page_owner->getGUID()}/");
-				
-				}
 			}
 
-		// Add submenu options
-			if (get_context() == 'groups' && !($page_owner instanceof ElggGroup)) {
-				if (isloggedin()) {
-					add_submenu_item(elgg_echo('groups:new'), $CONFIG->wwwroot."pg/groups/new/", 'groupslinks');
-					add_submenu_item(elgg_echo('groups:owned'), $CONFIG->wwwroot . "pg/groups/owned/" . $_SESSION['user']->username, 'groupslinks');
-					add_submenu_item(elgg_echo('groups:yours'), $CONFIG->wwwroot . "pg/groups/member/" . $_SESSION['user']->username, 'groupslinks');
-					add_submenu_item(elgg_echo('groups:invitations'), $CONFIG->wwwroot . "pg/groups/invitations/" . $_SESSION['user']->username, 'groupslinks');
-				}
-				add_submenu_item(elgg_echo('groups:all'), $CONFIG->wwwroot . "pg/groups/all/", 'groupslinks');
+			if($page_owner->forum_enable != "no"){
+				if (can_write_to_container(0, page_owner()) && isloggedin())
+					add_submenu_item(elgg_echo('groups:addtopic'),$CONFIG->wwwroot . "pg/forum/new/{$page_owner->getGUID()}/");
+			
 			}
+		}
+
+	// Add submenu options
+		if (get_context() == 'groups' && !($page_owner instanceof ElggGroup)) {
+			if (isloggedin()) {
+				add_submenu_item(elgg_echo('groups:new'), $CONFIG->wwwroot."pg/groups/new/", 'groupslinks');
+				add_submenu_item(elgg_echo('groups:owned'), $CONFIG->wwwroot . "pg/groups/owned/" . $_SESSION['user']->username, 'groupslinks');
+				add_submenu_item(elgg_echo('groups:yours'), $CONFIG->wwwroot . "pg/groups/member/" . $_SESSION['user']->username, 'groupslinks');
+				add_submenu_item(elgg_echo('groups:invitations'), $CONFIG->wwwroot . "pg/groups/invitations/" . $_SESSION['user']->username, 'groupslinks');
+			}
+			add_submenu_item(elgg_echo('groups:all'), $CONFIG->wwwroot . "pg/groups/all/", 'groupslinks');
+		}
 
 	}
 	function pages_submenus_inria() {
@@ -570,7 +547,6 @@
 
 						elgg_extend_view('metatags','pages/metatags');
 					}
-    				//include($CONFIG->pluginspath . "pages/index.php");	
     				include($CONFIG->pluginspath . "theme_inria/pages/index.php");	
     			break;
     			case "edit":
@@ -587,7 +563,7 @@
 						add_submenu_item(elgg_echo('pages:label:history'), $CONFIG->url . "pg/pages/history/$guid", 'pageslinks');
 					}
 
-    				include($CONFIG->pluginspath . "pages/edit.php");
+    				include($CONFIG->pluginspath . "theme_inria/pages/edit.php");
     			break;
     			case "view":
     				
@@ -607,7 +583,7 @@
 						add_submenu_item(elgg_echo('pages:label:history'), $CONFIG->url . "pg/pages/history/$guid", 'pagesactions');
 					}
 
-    				include($CONFIG->pluginspath . "pages/view.php");
+    				include($CONFIG->pluginspath . "theme_inria/pages/view.php");
     			break;   
     			case "history":
     				if (isset($page[1])) {
@@ -663,7 +639,7 @@
 				break;
 			case "owner":
 				set_input('username', $page[1]);
-				include($CONFIG->pluginspath . "blog/index.php");
+				include($CONFIG->pluginspath . "theme_inria/blog/index.php");
 				break;
 			case "friends":
 				set_input('username', $page[1]);
@@ -677,6 +653,7 @@
 				include($CONFIG->pluginspath . "blog/add.php");
 				break;
 			case "edit":
+				set_context("blog");
 				set_input('blogpost', $page[1]);
 				include($CONFIG->pluginspath . "theme_inria/blog/edit.php");
 				break;
@@ -725,11 +702,11 @@
 				break;
 			case "memberlist":
 				set_input('group_guid', $page[1]);
-				include($CONFIG->pluginspath . "groups/memberlist.php");
+				include($CONFIG->pluginspath . "theme_inria/groups/memberlist.php");
 				break;
 			case "forum":
 				set_input('group_guid', $page[1]);
-				include($CONFIG->pluginspath . "groups/forum.php");
+				include($CONFIG->pluginspath . "theme_inria/groups/forum.php");
 				break;
 			case "membershipreq":
 				set_input('group_guid', $page[1]);
@@ -740,12 +717,6 @@
 				if (is_numeric($page[0])) {
 					// pg/groups/<guid>
 					set_input('group_guid', $page[0]);
-					if(isset($page[2])){
-						// pg/groups/<guid>/<name>/<tab>
-						set_input('group_tab', $page[2]);
-					}else{
-						set_input('group_tab', 'home');
-					}
 				} else {
 					// pg/groups/profile/<guid>
 					set_input('group_guid', $page[1]);
@@ -755,6 +726,61 @@
 				//include($CONFIG->pluginspath . "theme_inria/groups/groupprofile.php");
 				break;
 		}
+	}
+	function bookmarks_page_handler_inria($page) {
+		global $CONFIG;
+		// group usernames
+		if (substr_count($page[0], 'group:')) {
+			preg_match('/group\:([0-9]+)/i', $page[0], $matches);
+			$guid = $matches[1];
+			if ($entity = get_entity($guid)) {
+				bookmarks_url_forwarder($page);
+			}
+		}
+	
+		// user usernames
+		$user = get_user_by_username($page[0]);
+		if ($user) {
+			bookmarks_url_forwarder($page);
+		}
+	
+		switch ($page[0]) {
+			case "read":
+				set_input('bookmarks_guid', $page[1]);
+				require($CONFIG->pluginspath . "theme_inria/bookmarks/read.php");
+				break;
+			case "friends":
+				set_input('username', $page[1]);
+				include($CONFIG->pluginspath . "bookmarks/friends.php");
+				break;
+			case "all":
+				include($CONFIG->pluginspath . "bookmarks/everyone.php");
+				break;
+			case "inbox":
+				set_input('username', $page[1]);
+				include($CONFIG->pluginspath . "bookmarks/inbox.php");
+				break;
+			case "owner":
+				set_input('username', $page[1]);
+				include($CONFIG->pluginspath . "theme_inria/bookmarks/index.php");
+				break;
+			case "add":
+				set_input('username', $page[1]);
+				include($CONFIG->pluginspath . "theme_inria/bookmarks/add.php");
+				break;
+			case "edit":
+				set_input('bookmark', $page[1]);
+				include($CONFIG->pluginspath . "theme_inria/bookmarks/add.php");
+				break;
+			case "bookmarklet":
+				set_input('username', $page[1]);
+				include($CONFIG->pluginspath . "bookmarks/bookmarklet.php");
+				break;
+			default:
+				return false;
+		}
+	
+		return true;
 	}
 	/**
 	* File page handler
@@ -788,7 +814,7 @@
 				break;
 			case "owner":
 				set_input('username', $page[1]);
-				require($CONFIG->pluginspath . "file/index.php");
+				require($CONFIG->pluginspath . "theme_inria/file/index.php");
 				break;
 			case "friends":
 				set_input('username', $page[1]);
@@ -799,11 +825,11 @@
 				break;
 			case "new":
 				set_input('username', $page[1]);
-				require($CONFIG->pluginspath . "file/upload.php");
+				require($CONFIG->pluginspath . "theme_inria/file/upload.php");
 				break;
 			case "edit":
 				set_input('file_guid', $page[1]);
-				require($CONFIG->pluginspath . "file/edit.php");
+				require($CONFIG->pluginspath . "theme_inria/file/edit.php");
 				break;
 			default:
 				return false;
@@ -811,7 +837,6 @@
 	
 		return true;
 	}
-	
 	function groups_kill_request_inria($hook_name, $entity_type, $return_value, $parameters){
 		global $CONFIG;
 		return include $CONFIG->pluginspath . 'theme_inria/groups/groupskillrequest.php';

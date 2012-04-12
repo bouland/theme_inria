@@ -11,11 +11,8 @@ if ($shell == "no") {
 	$shell = true;
 }
 
-$context = get_input('context');
-if ($context) {
-	set_context($context);
-}
-
+//theme_inria change
+set_context('file');
 // Get the entity, if possible
 if ($entity = get_entity($guid)) {
 	if ($entity->container_guid) {
@@ -30,7 +27,11 @@ if ($entity = get_entity($guid)) {
 	} else if ($entity instanceof ElggEntity) {
 		$title = $entity->name;
 	}
-	$area2 = elgg_view_entity($entity,true);
+	
+	//theme_inria change
+	$area2 = elgg_view('profile/tabs/menu', array('entity' => $entity, 'tab_select' => 'file'));
+	$area2 .= elgg_view_entity($entity,true);
+
 	if ($shell) {
 		$body = elgg_view_layout('two_column_left_sidebar', '', $area2);
 	} else {

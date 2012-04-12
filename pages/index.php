@@ -10,18 +10,10 @@
 	global $CONFIG;
 	
 	// Add menus
-	$owner = page_owner_entity();
-	if (!($owner instanceof ElggGroup)) {
-    		add_submenu_item(sprintf(elgg_echo("pages:user"), page_owner_entity()->name), $CONFIG->url . "pg/pages/owned/" . page_owner_entity()->username, 'pageslinksgeneral');
-    		add_submenu_item(elgg_echo('pages:all'),$CONFIG->wwwroot."pg/pages/all/", 'pageslinksgeneral');
+	if ( can_write_to_container(0,page_owner()) ){
+		add_submenu_item(elgg_echo('pages:new'), $CONFIG->url . "pg/pages/new/?container_guid=" . page_owner(), 'pagesactions');
 	}
-    if (($owner instanceof ElggEntity) && (can_write_to_container(0,$owner->guid))){
-        add_submenu_item(elgg_echo('pages:new'), $CONFIG->url . "pg/pages/new/?container_guid=" . page_owner(), 'pagesactions');
-        //if ($owner instanceof ElggUser) {
-			add_submenu_item(elgg_echo('pages:welcome'), $CONFIG->url . "pg/pages/welcome/" . $owner->username, 'pagesactions');
-		//}
-    }
-    
+	
     //INRIA update
 	$group = page_owner_entity();
 	if ($group->pages_enable != 'no') {
@@ -72,8 +64,10 @@
 	
 	//$side_bar = elgg_view('theme_inria/pageTreeSideBar');
 	
-	$body = elgg_view_title($title);
-	$body .= elgg_view("pages/welcome", array('entity' => $welcome_message));
+	//$body = elgg_view_title($title);
+	//theme_inria
+	$body = elgg_view('profile/tabs/menu', array('entity' => page_owner_entity(), 'tab_select' => 'pages'));
+	//$body .= elgg_view("pages/welcome", array('entity' => $welcome_message));
 	$body .= $objects;
 	$body = elgg_view_layout('two_column_left_sidebar', '', $body, $side_bar);
 	

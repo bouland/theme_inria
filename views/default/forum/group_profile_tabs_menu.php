@@ -1,9 +1,9 @@
 <?php
-if ($vars['entity']->file_enable != 'no'){
+if ($vars['entity']->forum_enable != 'no'){
 	echo '<li ';
-	if ($vars['group_tab'] == 'forum') {
+	if ($vars['tab_select'] == 'forum') {
 		echo "class='selected'";
 	}
-	echo '><a href="' . $vars['entity']->getURL() . 'forum">' . elgg_echo('groups:tabs:forum') . '</a></li>';
+	echo '><a href="' . $vars['url'] . "pg/groups/forum/" . page_owner() . '">' . elgg_echo('groups:tabs:forum') . '</a></li>';
 }
 	
