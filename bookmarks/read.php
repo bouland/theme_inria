@@ -34,14 +34,12 @@
 
 	// Breadcrumbs
 	//$body = elgg_view('pages/breadcrumbs', array('page_owner' => page_owner_entity(), 'parent' => $parent));
-	$body = elgg_view('profile/tabs/menu', array('entity' => $bookmark, 'tab_select' => 'bookmarks'));
+	$area2 = elgg_view('profile/tabs/menu', array('entity' => $bookmark, 'tab_select' => 'bookmarks'));
+	$content = elgg_view_entity($bookmark, true);
+	$content .= elgg_view_layout('two_column_left_sidebar', '', $body, '');
+	$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
 	
-	
-	$body .= elgg_view_entity($bookmark, true);
-
-
-	$body = elgg_view_layout('two_column_left_sidebar', '', $body, '');
-
+	$body = elgg_view_layout("two_column_left_sidebar", '', $area2);
 	// Finally draw the page
 	page_draw($title, $body);
 

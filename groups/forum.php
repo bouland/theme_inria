@@ -26,11 +26,12 @@
 	$area2 = elgg_view('profile/tabs/menu', array('entity' => $group, 'tab_select' => 'forum'));
 	//get any forum topics
 	set_context('search');	
-	$area2 .= elgg_view('forum/topiclist' , array('entity' => $group));
-	$area2 .= list_entities_from_annotations("object", "groupforumtopic", "group_topic_post", "", 20, 0, $group_guid, false, false, false);
+	$content .= elgg_view('forum/topiclist' , array('entity' => $group));
+	$content .= list_entities_from_annotations("object", "groupforumtopic", "group_topic_post", "", 20, 0, $group_guid, false, false, false);
 	//$topics = list_entities_from_annotations("object", "groupforumtopic", "group_topic_post", "", 20, 0, $group_guid, false, false, false);
 	//$area2 .= elgg_view("forum/topics", array('topics' => $topics, 'group_guid' => $group_guid));
-	
+	$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
+	 
 	
 	$body = elgg_view_layout('two_column_left_sidebar','', $area2);
 	

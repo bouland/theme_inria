@@ -45,20 +45,22 @@
 
 	// Breadcrumbs
 	//$body = elgg_view('pages/breadcrumbs', array('page_owner' => page_owner_entity(), 'parent' => $parent));
-	$body = elgg_view('profile/tabs/menu', array('entity' => page_owner_entity(), 'tab_select' => 'pages'));
+	$area2 = elgg_view('profile/tabs/menu', array('entity' => page_owner_entity(), 'tab_select' => 'pages'));
 	
-	$body .= elgg_view_title($pages->title);
+	$content = elgg_view_title($pages->title);
 	
 	
-	$body .= elgg_view_entity($pages, true);
+	$content .= elgg_view_entity($pages, true);
 
 	//add comments
-	$body .= elgg_view_comments($pages);
+	$content .= elgg_view_comments($pages);
 
+	$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
+	
 	pages_set_navigation_parent($pages);
 	$sidebar = elgg_view('pages/sidebar/tree');
 
-	$body = elgg_view_layout('two_column_left_sidebar', '', $body, $sidebar);
+	$body = elgg_view_layout('two_column_left_sidebar', '', $area2, $sidebar);
 
 	// Finally draw the page
 	page_draw($title, $body);

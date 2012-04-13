@@ -39,8 +39,9 @@ $title = elgg_echo('file:edit');
 
 //theme_inria change
 $area2 = elgg_view('profile/tabs/menu', array('entity' => page_owner_entity(), 'tab_select' => 'file'));
-$area2 .= elgg_view_title($title);
-$area2 .= elgg_view("file/upload", array('entity' => $file));
+$content = elgg_view_title($title);
+$content .= elgg_view("file/upload", array('entity' => $file));
+$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
 
 $body = elgg_view_layout('two_column_left_sidebar', '', $area2);
 page_draw($title, $body);

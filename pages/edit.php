@@ -36,19 +36,20 @@
 	
 	$title = elgg_echo("pages:edit");
 	
-	$body = elgg_view('profile/tabs/menu', array('entity' => page_owner_entity(), 'tab_select' => 'pages'));
+	$area2 = elgg_view('profile/tabs/menu', array('entity' => page_owner_entity(), 'tab_select' => 'pages'));
 		
 	if (($pages) && ($pages->canEdit()))
 	{
-		$body .= elgg_view_title($title);
+		$content = elgg_view_title($title);
 		
-		$body .= elgg_view("forms/pages/edit", array('entity' => $pages));
+		$content .= elgg_view("forms/pages/edit", array('entity' => $pages));
 			 
 	} else {
-		$body .= elgg_echo("pages:noaccess");
+		$content .= elgg_echo("pages:noaccess");
 	}
-	
-	$body = elgg_view_layout('two_column_left_sidebar', '', $body);
+	$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
+	 
+	$body = elgg_view_layout('two_column_left_sidebar', '', $area2);
 	
 	page_draw($title, $body);
 ?>

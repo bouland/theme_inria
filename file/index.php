@@ -35,8 +35,8 @@
 	if (!$content) {
 		$content = elgg_view('page_elements/contentwrapper',array('body' => elgg_echo("file:none")));
 	}
-	$area2 .= $content;
-
+	$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
+	
 	set_context('file');
 	$area1 = get_filetype_cloud(page_owner());
 

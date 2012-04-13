@@ -22,7 +22,9 @@
 		if ($post->canEdit()) {
 
 			$area1 = elgg_view_title(elgg_echo('blog:editpost'));
-			$area1 .= elgg_view("blog/forms/edit", array('entity' => $post));
+			$content = elgg_view("blog/forms/edit", array('entity' => $post));
+			$area1 .= elgg_view('profile/tabs/content', array('content' => $content));
+	
 			$body = elgg_view_layout("edit_layout", $area1);
 
 		}

@@ -24,10 +24,12 @@
 		$area2 = elgg_view('profile/tabs/menu', array('entity' => page_owner_entity(), 'tab_select' => 'bookmarks'));
 		
 		// List bookmarks
-		$area2 .= elgg_view_title($title);
+		//$content = elgg_view_title($title);
 		set_context('search');
 		$offset = (int)get_input('offset', 0);
-		$area2 .= elgg_list_entities(array('type' => 'object', 'subtype' => 'bookmarks', 'container_guid' => page_owner(), 'limit' => 10, 'offset' => $offset, 'full_view' => FALSE, 'view_type_toggle' => FALSE));
+		$content .= elgg_list_entities(array('type' => 'object', 'subtype' => 'bookmarks', 'container_guid' => page_owner(), 'limit' => 10, 'offset' => $offset, 'full_view' => FALSE, 'view_type_toggle' => FALSE));
+		$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
+		
 		set_context('bookmarks');
 		
 	// Format page

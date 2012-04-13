@@ -41,8 +41,9 @@
 	$offset = (int)get_input('offset', 0);
 		
 	// Get a list of blog posts
-	$area2 .= elgg_list_entities(array('type' => 'object', 'subtype' => 'blog', 'container_guid' => page_owner(), 'limit' => 10, 'offset' => $offset, 'full_view' => FALSE, 'view_type_toggle' => FALSE));
-
+	$content = elgg_list_entities(array('type' => 'object', 'subtype' => 'blog', 'container_guid' => page_owner(), 'limit' => 10, 'offset' => $offset, 'full_view' => FALSE, 'view_type_toggle' => FALSE));
+	$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
+	
 	// Get blog tags
 
 	// Get categories, if they're installed
@@ -51,7 +52,7 @@
 		'subtype' => 'blog', 
 		'owner_guid' => $page_owner->guid));
 	
-	set_context('blog_list');
+	set_context('blog');
 	// Display them in the page
     $body = elgg_view_layout("two_column_left_sidebar", '', $area2, $area3);
 		

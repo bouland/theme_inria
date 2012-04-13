@@ -2528,3 +2528,6 @@ margin:5px 0;
 #topic_title{
 	margin-right:2.4em;
 }
+.group_tab_wrapper{
+	padding-top : 20px;
+}

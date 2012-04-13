@@ -32,20 +32,19 @@
 		add_submenu_item(elgg_echo('pages:new'), $CONFIG->url . "pg/pages/new/?container_guid=" . $pages->container_guid , 'pagesactions2');
 	}
 		
-					 
-	$title = $pages->title . ": " . elgg_echo("pages:history");
-	
 	$area2 = elgg_view('profile/tabs/menu', array('entity' => $pages, 'tab_select' => 'pages'));
-	$area2 .= elgg_view_title($title);
+	
+	$title = $pages->title . ": " . elgg_echo("pages:history");
+	$content = elgg_view_title($title);
 	
 	$context = get_context();
-	
 	set_context('search');
 	
-	$area2 .= list_annotations($page_guid, 'page', $limit, false);
+	$content .= list_annotations($page_guid, 'page', $limit, false);
 	
 	set_context($context);
 	
+	$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
 	
 	pages_set_navigation_parent($pages);
 	$area3 = elgg_view('pages/sidebar/tree');

@@ -66,10 +66,13 @@
 	
 	//$body = elgg_view_title($title);
 	//theme_inria
-	$body = elgg_view('profile/tabs/menu', array('entity' => page_owner_entity(), 'tab_select' => 'pages'));
+	$area2 = elgg_view('profile/tabs/menu', array('entity' => page_owner_entity(), 'tab_select' => 'pages'));
 	//$body .= elgg_view("pages/welcome", array('entity' => $welcome_message));
-	$body .= $objects;
-	$body = elgg_view_layout('two_column_left_sidebar', '', $body, $side_bar);
+	$content = $objects;
+	
+	$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
+	
+	$body = elgg_view_layout('two_column_left_sidebar', '', $area2, $side_bar);
 	
 	// Finally draw the page
 	page_draw($title, $body);

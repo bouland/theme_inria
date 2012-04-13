@@ -39,8 +39,9 @@ if ($entity = get_entity($guid)) {
 	
 	//theme_inria change
 	$area2 = elgg_view('profile/tabs/menu', array('entity' => $entity, 'tab_select' => 'file'));
-	$area2 .= elgg_view_entity($entity,true);
-
+	$content = elgg_view_entity($entity,true);
+	$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
+	
 	if ($shell) {
 		$body = elgg_view_layout('two_column_left_sidebar', '', $area2);
 	} else {

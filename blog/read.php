@@ -36,14 +36,16 @@
 		$area2 = elgg_view('profile/tabs/menu', array('entity' => $blogpost, 'tab_select' => 'blog'));
 		
 		// Display it
-			$area2 .= elgg_view_entity($blogpost, true);
+		$content = elgg_view_entity($blogpost, true);
 			/*$area2 = elgg_view("object/blog",array(
 											'entity' => $blogpost,
 											'entity_owner' => $page_owner,
 											'comments' => $comments,
 											'full' => true
 											));
-			*/								
+			*/
+		$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
+			
 		// Set the title appropriately
 		$title = sprintf(elgg_echo("blog:posttitle"),$page_owner->name,$blogpost->title);
 		set_context('blog_view');

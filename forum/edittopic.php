@@ -23,10 +23,11 @@ if (can_write_to_container()){
 }
 
 //theme_inria change
-$content = elgg_view('profile/tabs/menu', array('entity' => $topic, 'tab_select' => 'forum'));
+$area2 = elgg_view('profile/tabs/menu', array('entity' => $topic, 'tab_select' => 'forum'));
+$content = elgg_view("forms/forums/edittopic", array('entity' => $topic));
+$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
 
-$content .= elgg_view("forms/forums/edittopic", array('entity' => $topic));
-$body = elgg_view_layout('two_column_left_sidebar', '', $content);
+$body = elgg_view_layout('two_column_left_sidebar', '', $area2);
 
 page_draw(elgg_echo('groups:edittopic'), $body);
 

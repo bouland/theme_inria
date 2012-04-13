@@ -1189,3 +1189,92 @@
 	
 		return true;
 	}
+	function elgg_view_river_group(array $options){
+		$defaults = array(
+						'limit'					=>	6,
+						'offset'				=>	0,
+						'pagination'			=> 	false
+	);
+	
+	$options = array_merge($defaults, $options);
+	
+	
+	$limit = (int)$options['limit'];
+	$offset = (int)$options['offset'];
+	$pagination = $options['pagination'];
+		// Get river items, if they exist
+		if ($riveritems = get_river_group_items($options)) {
+	
+			return elgg_view('river/item/list',array(
+				'limit' => $limit,
+				'offset' => $offset,
+				'items' => $riveritems,
+				'pagination' => $pagination
+			));
+	
+		}
+	
+		return '';
+	}
+	function get_river_group_items(array $options)
+	{
+		$defaults = array(
+								'group_guid' 			=> 	0,
+								'filter' 				=> 	'',
+								'limit'					=>	6,
+								'offset'				=>	0,
+								'posted_min' 			=> 0,
+								'posted_max' 			=> 0,
+								'pagination'			=> 	false
+		);
+		
+		
+		$options = array_merge($defaults, $options);
+	
+		$group_guid = (int)$options['group_guid'];
+		$filter = $options['filter'];
+		$limit = (int)$options['limit'];
+		$offset = (int)$options['offset'];
+		$posted_min =  (int)$options['posted_min'];
+		$posted_max =  (int)$options['posted_max'];
+		
+		global $CONFIG;
+		
+		$where = array();
+		
+		if( $filter instanceof ElggFilter)
+		{
+			$and = array();
+			$or = array();
+			foreach ($filter->river_types as $rivertype_id){
+				$river_type = get_rivertype_from_id($rivertype_id);
+				$and = array();
+				$and[] = " type = '{$river_type->type}' ";
+				if($river_type->subtype){
+					$and[] = " subtype = '{$river_type->subtype}' ";
+				}
+				$and[] = " action = '{$river_type->action}' ";
+				$or[] = '( '. implode(' AND ', $and) . ' )';
+			}
+			$where[] = '( '. implode(' OR ', $or) . ' )';
+		}
+		
+		if($group_guid > 0)
+		{
+			$where[] = "e.container_guid = {$group_guid}";
+		
+		}
+		if (count($where) > 0){
+			$whereclause = " WHERE " .implode(' AND ', $where);
+		}else{
+			$whereclause = '';
+		}
+		// Construct main SQL
+		$sql = "SELECT r.id, t.type, t.subtype, t.action, r.access_id, t.view, r.subject_guid, r.object_guid, r.annotation_id, r.posted".
+		" FROM {$CONFIG->dbprefix}river r JOIN {$CONFIG->dbprefix}river_types t ON r.river_type = t.id JOIN {$CONFIG->dbprefix}entities e ON e.guid = r.object_guid".
+		$whereclause .
+		" ORDER BY posted DESC".
+		" LIMIT {$offset},{$limit}";
+		// Get data
+		return get_data($sql);
+	}

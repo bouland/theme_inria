@@ -22,11 +22,17 @@
 		
 		$area2 = elgg_view('profile/tabs/menu', array('entity' => $group, 'tab_select' => 'home'));
 		
-		$area2 .= 	elgg_view('group/group', array('entity' => $group, 'user' => $_SESSION['user'], 'full' => true));
-		
+		$content = 	elgg_view('group/group', array('entity' => $group, 'user' => $_SESSION['user'], 'full' => true));
 		
 		//elgg_view('group/group', array('entity' => $group, 'user' => $_SESSION['user'], 'full' => true));
-
+		$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
+			
+		$content = elgg_view_river_group(array('group_guid' => $group_guid));
+		if($content){
+			$area2 .= elgg_view('custom_index_inria/index_box', array('title' => elgg_echo('inria:news'),
+																  'body'  => $content ));
+		}
+		//$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
 		
 		$body = elgg_view_layout('two_column_left_sidebar', $area1, $area2, $area3);
 	} else {

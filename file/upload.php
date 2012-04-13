@@ -18,9 +18,11 @@
 	
 	//theme_inria change
 	$area2 = elgg_view('profile/tabs/menu', array('entity' => page_owner_entity(), 'tab_select' => 'file'));
-	$area2 .= elgg_view_title($title = elgg_echo('file:upload'));
 	
-	$area2 .= elgg_view("file/upload", array('container_guid' => $container_guid));
+	$content = elgg_view_title($title = elgg_echo('file:upload'));
+	$content .= elgg_view("file/upload", array('container_guid' => $container_guid));
+	
+	$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
 	$body = elgg_view_layout('two_column_left_sidebar', '', $area2);
 	
 	page_draw(elgg_echo("file:upload"), $body);

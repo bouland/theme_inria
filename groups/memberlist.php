@@ -12,7 +12,9 @@ $title = sprintf(elgg_echo('groups:membersof'), $group->name);
 $area2 = elgg_view('profile/tabs/menu', array('entity' => page_owner_entity(), 'tab_select' => 'members'));
 
 
-$area2 .= list_entities_from_relationship('member', $group_guid, true, 'user', '', 0, 10, false);
+$content = list_entities_from_relationship('member', $group_guid, true, 'user', '', 0, 10, false);
+
+$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
 
 $body = elgg_view_layout('two_column_left_sidebar', '', $area2);
 

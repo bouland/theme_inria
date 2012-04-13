@@ -15,7 +15,7 @@
 		
     // get the entity from id
 		$topic_guid=get_input('topic');
-        $topic = get_entity($topic_guid);
+    	$topic = get_entity($topic_guid);
         if (!$topic) forward();
 		
         $group_guid = $topic->container_guid;
@@ -36,8 +36,10 @@
 		//theme_inria change
 		$area2 = elgg_view('profile/tabs/menu', array('entity' => $topic, 'tab_select' => 'forum'));
     // Display them
-	    $area2 .= elgg_view("forum/viewposts", array('entity' => $topic));
-	    $body = elgg_view_layout("two_column_left_sidebar", '' , $area2);
+	    $content = elgg_view("forum/viewposts", array('entity' => $topic));
+		$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
+	    
+		$body = elgg_view_layout("two_column_left_sidebar", '' , $area2);
 		
 	// Display page
 		page_draw($topic->title,$body);
