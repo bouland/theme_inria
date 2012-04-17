@@ -78,7 +78,7 @@
 		'groups:tabs:pages' => 'Wiki',
 		'groups:tabs:files' => 'Fichiers',
 		'groups:tabs:bookmarks' => 'Signets',
-		
+		'groups:publications' => 'Publications',
 		'blog:addpost' => "Ajouter une nouvelle news",
 		'blog:editpost' => "Editer cette news",
 		'blog:delpost' => "Supprimer cette news",
@@ -90,6 +90,9 @@
 		'pages:new' => 'Ajouter une nouvelle page',
 		
 		'groups:deltopic' => 'Supprimer la discussion',
+		'groups:tabs:river' => 'Les 6 dernières activités',
+		'groups:lastactivity' => 'Dernière activité %s',
+		'groups:admin' => 'Admin: ',
 		
 		'file:edit' => 'Modifer le fichier',
 		'file:delete' => 'Supprimer le fichier',

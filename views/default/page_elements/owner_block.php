@@ -20,11 +20,32 @@ if ($owner instanceof ElggEntity) {
 	$display = "<div id=\"owner_block_icon\">" . $icon . "</div>";
 	$display .= "<div id=\"owner_block_content\">" . $info . "</div><div class=\"clearfloat ownerblockline\"></div>";
 
-	if ($owner->briefdescription) {
+	/*if ($owner->briefdescription) {
 		$desc = $owner->briefdescription;
 		$display .= "<div id=\"owner_block_desc\">" . $desc . "</div>";
+	}*/
+	if ($owner instanceof ElggGroup){
+		if ($owner->membership == ACCESS_PUBLIC) {
+			$lock_label = elgg_echo("groups:open");
+			$lock_icon = elgg_view('icon/locks/green');
+		} else {
+			$lock_label = elgg_echo("groups:closed");
+			$lock_icon = elgg_view('icon/locks/red');
+		}
+		$info =   '<div class="owner_block_lock">' . $lock_icon . '</div><div><p>' . $lock_label . '</p>';
+		$info .= '<p><b>' .$owner->getMembers(0,0,true) . '</b>&nbsp;'. elgg_echo('groups:member') . '</p>';
+		$info .= '<p><b>' . count($owner->getObjects('', 0, 0)) . '</b>&nbsp;'. elgg_echo('groups:publications') . '</p>';
+		$group_owner = get_user($owner->getOwner());
+		
+		if($group_owner instanceof ElggUser)
+		{
+			$info .= '<p>' . elgg_echo('groups:admin') . ' <a href="' . $group_owner->getURL() . '">' . $group_owner->name . '</a></p></div>';
+		}
+		
+		$display .= "<div id=\"owner_block_desc\">" . $info . "</div>";
+		
 	}
-
+	
 	$contents .= $display;
 }
 
@@ -45,7 +66,7 @@ if (isset($autofeed) && $autofeed == true) {
 
 END;
 }
-
+//theme_inria add $vars
 $contents .= elgg_view('owner_block/extend',$vars);
 
 
@@ -55,7 +76,7 @@ if (isset($vars['content']))
 
 // Initialise the submenu (plugins can add to the submenu)
 $submenu = get_submenu();
-
+//theme_inria add $vars
 $submenu .= elgg_view('submenu/extend',$vars);
 
 if (!empty($submenu))

@@ -2531,3 +2531,9 @@ margin:5px 0;
 .group_tab_wrapper{
 	padding-top : 20px;
 }
+#owner_block_desc p{
+	margin:0;
+}
+#owner_block_content{
+	margin-left:35px;
+}

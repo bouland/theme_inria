@@ -29,7 +29,7 @@
 			
 		$content = elgg_view_river_group(array('group_guid' => $group_guid));
 		if($content){
-			$area2 .= elgg_view('custom_index_inria/index_box', array('title' => elgg_echo('inria:news'),
+			$area2 .= elgg_view('custom_index_inria/index_box', array('title' => elgg_echo('groups:tabs:river'),
 																  'body'  => $content ));
 		}
 		//$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
