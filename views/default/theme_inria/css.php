@@ -25,12 +25,11 @@ margin:5px 0;
 #owner_block_content{
 	margin-left:35px;
 }
-.footer{
-	float:right;
+#footer_link{
+	float:left;
 }
-.footer_text,
-.footer_icon{
-	display:inline-block;
+#footer_text{
+	float:right;
 }
 #content_area_group_title{
 	display:none;
@@ -38,4 +37,23 @@ margin:5px 0;
 #pages_title{
 	text-align:center;
 	margin:10px 0 20px 0;
+}
+.blog_post{
+	padding:0;
+}
+.blog_post .usericon{
+	float:left;
+}
+.blog_post h3,
+.blog_post p.tags{
+	margin-left:60px;
+}
+.blog_post_body{
+	margin-bottom:10px;
+}
+.generic_comment_owner{
+	text-align:right;
+}
+.generic_comment_details{
+	min-height:56px;
 }

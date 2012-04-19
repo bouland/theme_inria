@@ -1,6 +1,6 @@
 <?php
 $group = page_owner_entity();
-if ($group && $group instanceof ElggGroup && $group->file_enable != 'no'){
+if ($group && $group instanceof ElggGroup && $group->file_enable == 'yes'){
 	echo '<li ';
 	if (get_context() == 'file') {
 		echo "class='selected'";

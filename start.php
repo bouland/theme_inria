@@ -41,11 +41,11 @@
 		//members
 		elgg_extend_view('profile/tabs/menu_extend','members/group_profile_tabs_menu');
 		
-		
+		/*
 		if (is_plugin_enabled('pages_tree')){
 			elgg_extend_view('submenu/extend', 'groups/pagesTree');
 		}
-		
+		*/
 		unregister_page_handler('groups','groups_page_handler');
 		register_page_handler('groups','groups_page_handler_inria');
 

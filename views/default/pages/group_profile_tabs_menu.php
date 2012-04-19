@@ -1,6 +1,6 @@
 <?php
 $group = page_owner_entity();
-if ($group && $group instanceof ElggGroup && $group->pages_enable != 'no'){
+if ($group && $group instanceof ElggGroup && $group->pages_enable == 'yes'){
 	echo '<li ';
 	if (get_context() == 'pages') {
 		echo "class='selected'";
