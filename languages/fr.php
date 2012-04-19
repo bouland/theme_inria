@@ -8,7 +8,7 @@
 
 	$french = array (
 		'theme_inria:topbar:me' => "Moi",
-		'theme_inria:topbar:usergroups' => 'Mes groupes',
+		'theme_inria:topbar:usergroups' => 'Mes&nbsp;groupes',
 		'theme_inria:topbar:userfriends' => "Mes&nbsp;contacts",
 		'theme_inria:topbar:dashboard' => "Mes&nbsp;activités",
 		'theme_inria:topbar:profil' => "Mon profil",
@@ -79,7 +79,7 @@
 		'groups:tabs:files' => 'Fichiers',
 		'groups:tabs:bookmarks' => 'Signets',
 		'groups:tabs:presentation' => 'Présentations',
-		
+		'groups:tabs:photos' => 'Photos',
 		
 		'blog:none' => 'Aucune news pour le moment',
 		'blog:addpost' => "Ajouter une nouvelle news",
@@ -98,6 +98,7 @@
 		'groups:tabs:river' => 'Les 6 dernières activités',
 		'groups:lastactivity' => 'Dernière activité %s',
 		'groups:admin' => 'Admin: ',
+		'groups:publications' => 'Publications',
 		
 		'file:edit' => 'Modifier le fichier',
 		'file:delete' => 'Supprimer le fichier',
@@ -108,7 +109,7 @@
 		'entities:owner' => 'par %s',
 		'entities:footer:time' => 'Dernière mise à jour %s',
 		
-		'groups:tabs:photos' => 'Photos',
+		
 		
 	);
 					
