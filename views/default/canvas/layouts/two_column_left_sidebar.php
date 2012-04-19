@@ -24,8 +24,14 @@
 
 <!-- main content -->
 <div id="two_column_left_sidebar_maincontent">
-
-<?php if (isset($vars['area2'])) echo $vars['area2']; ?>
+	<div id="elgg_horizontal_tabbed_nav">
+		<ul>
+		<?php	echo elgg_view('profile/tabs/menu_extend'); ?>
+		</ul>
+	</div>
+	<div class="group_tab_wrapper">
+		<?php if (isset($vars['area2'])) echo $vars['area2']; ?>
+	</div>
 
 </div><!-- /two_column_left_sidebar_maincontent -->
 

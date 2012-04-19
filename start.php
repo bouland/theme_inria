@@ -10,11 +10,15 @@
 	/* Initialise the theme */
 	function theme_inria_init(){
 		global $CONFIG;
+		elgg_extend_view('css','theme_inria/css');
 		elgg_extend_view('riverdashboard/sitemessage', 'theme_inria/login', 450);
 		elgg_extend_view('groups/find', 'theme_inria/login', 450);
 		//elgg_extend_view('submenu/extend', 'groups/members');
 		elgg_extend_view('login/extend', 'theme_inria/login_option');
 		elgg_extend_view('metatags','theme_inria/metatags');
+		
+		elgg_unextend_view('profile/tabs/menu_extend', 'webinar/group_profile_tabs_menu');
+		
 		elgg_extend_view('jquery','theme_inria/jquery');
 		//home
 		elgg_extend_view('profile/tabs/menu_extend','theme_inria/group_profile_tabs_menu');
@@ -22,12 +26,18 @@
 		elgg_extend_view('profile/tabs/menu_extend','blog/group_profile_tabs_menu');
 		//pages
 		elgg_extend_view('profile/tabs/menu_extend','pages/group_profile_tabs_menu');
+		//presentation
+		elgg_extend_view('profile/tabs/menu_extend','presentation/group_profile_tabs_menu');
 		//forum
 		elgg_extend_view('profile/tabs/menu_extend','forum/group_profile_tabs_menu');
 		//file
 		elgg_extend_view('profile/tabs/menu_extend','file/group_profile_tabs_menu');
 		//bookmarks
 		elgg_extend_view('profile/tabs/menu_extend','bookmarks/group_profile_tabs_menu');
+		//meeting
+		elgg_extend_view('profile/tabs/menu_extend','webinar/group_profile_tabs_menu');
+		//photos
+		elgg_extend_view('profile/tabs/menu_extend','tidypics/group_profile_tabs_menu');
 		//members
 		elgg_extend_view('profile/tabs/menu_extend','members/group_profile_tabs_menu');
 		
@@ -45,13 +55,14 @@
 		unregister_elgg_event_handler('pagesetup','system','file_submenus');
 		unregister_elgg_event_handler('pagesetup','system','bookmarks_pagesetup');
 		unregister_elgg_event_handler('pagesetup','system','event_calendar_pagesetup');
-		unregister_elgg_event_handler('pagesetup','system','tidypics_submenus');
+		//unregister_elgg_event_handler('pagesetup','system','tidypics_submenus');
 		
 		unregister_page_handler('blog','blog_page_handler');
 		unregister_page_handler('pages','pages_page_handler');
 		unregister_page_handler('forum','forum_page_handler');
 		unregister_page_handler('file','file_page_handler');
 		unregister_page_handler('bookmarks','bookmarks_page_handler');
+		//unregister_page_handler('photos','tidypics_page_handler');
 		
 		unregister_plugin_hook('notify:entity:message', 'object', 'blog_notify_message');
 		unregister_plugin_hook('notify:entity:message', 'object', 'page_notify_message');
@@ -88,7 +99,8 @@
 		register_elgg_event_handler('pagesetup','system','event_calendar_pagesetup_inria');
     	
     	//tidypics Album Photos
-		register_elgg_event_handler('pagesetup','system','tidypics_submenus_inria');	
+		//register_page_handler('photos','tidypics_page_handler_inria');
+		//register_elgg_event_handler('pagesetup','system','tidypics_submenus_inria');	
 		
 
 		
@@ -346,127 +358,6 @@
 		}
 	
 	}
-	function tidypics_submenus_inria() {
-		
-		global $CONFIG;
-		
-		$page_owner = page_owner_entity();
-		
-		if ($page_owner instanceof ElggGroup) {
-			if (get_context() == "groups") {
-				if ($page_owner->photos_enable != "no") {
-					//add_submenu_item(	sprintf(elgg_echo('album:group'),$page_owner->name), 
-					//					$CONFIG->wwwroot . "pg/photos/owned/" . $page_owner->username);
-					add_submenu_item(	elgg_echo('album:create'), 
-										$CONFIG->wwwroot . "pg/photos/new/{$page_owner->username}/");
-				}
-			}
-		}
-		// context is only set to photos on individual pages, not on group pages
-		else if (get_context() == "photos") {
-			
-			$view_count = get_plugin_setting('view_count', 'tidypics');
-			
-			// owner gets "your albumn", "your friends albums", "your most recent", "your most viewed"
-			if (get_loggedin_userid() && get_loggedin_userid() == $page_owner->guid) {
-								
-				add_submenu_item(	elgg_echo('album:create'), 
-									$CONFIG->wwwroot . "pg/photos/new/{$page_owner->username}/", 
-									'tidypics-a' );
-
-				add_submenu_item(	elgg_echo("album:yours"), 
-									$CONFIG->wwwroot . "pg/photos/owned/{$page_owner->username}/", 
-									'tidypics-a' );
-
-				add_submenu_item( 	elgg_echo('album:yours:friends'), 
-									$CONFIG->wwwroot . "pg/photos/friends/{$page_owner->username}/", 
-									'tidypics-a');
-				
-				add_submenu_item(	elgg_echo('tidypics:yourmostrecent'),
-									$CONFIG->wwwroot . "pg/photos/mostrecent/{$page_owner->username}/",
-									'tidypics-a');
-				
-				if ($view_count != 'disabled') {
-					add_submenu_item(	elgg_echo('tidypics:yourmostviewed'),
-										$CONFIG->wwwroot . "pg/photos/mostviewed/{$page_owner->username}/",
-										'tidypics-a');
-				}
-				
-			} else if (isloggedin()) {
-				
-				$user = get_loggedin_user();
-				
-				// logged in not owner gets "page owners albums", "page owner's friends albums", "page owner's most viewed", "page owner's most recent"
-				// and then "your albums", "your most recent", "your most viewed"
-				add_submenu_item(	elgg_echo("album:yours"), 
-									$CONFIG->wwwroot . "pg/photos/owned/{$user->username}/", 
-									'tidypics-b' );
-								
-				add_submenu_item(	elgg_echo('tidypics:yourmostrecent'),
-									$CONFIG->wwwroot . "pg/photos/mostrecent/{$user->username}/",
-									'tidypics-b');
-									
-				if ($view_count != 'disabled') {
-					add_submenu_item(	elgg_echo('tidypics:yourmostviewed'),
-										$CONFIG->wwwroot . "pg/photos/mostviewed/{$user->username}/",
-										'tidypics-b');
-				}
-				
-				if ($page_owner->name) { // check to make sure the owner set their display name
-					add_submenu_item(	sprintf(elgg_echo("album:user"), $page_owner->name), 
-										$CONFIG->wwwroot . "pg/photos/owned/{$page_owner->username}/", 
-										'tidypics-a' );
-					add_submenu_item( 	sprintf(elgg_echo('album:friends'),$page_owner->name), 
-										$CONFIG->wwwroot . "pg/photos/friends/{$page_owner->username}/", 
-										'tidypics-a');
-					
-					if ($view_count != 'disabled') {
-						add_submenu_item( 	sprintf(elgg_echo('tidypics:friendmostviewed'),$page_owner->name), 
-											$CONFIG->wwwroot . "pg/photos/mostviewed/{$page_owner->username}/", 
-											'tidypics-a');
-					}
-					
-					add_submenu_item( 	sprintf(elgg_echo('tidypics:friendmostrecent'),$page_owner->name), 
-										$CONFIG->wwwroot . "pg/photos/mostrecent/{$page_owner->username}/", 
-										'tidypics-a');
-				}
-			} else if ($page_owner->guid) {
-				// non logged in user gets "page owners albums", "page owner's friends albums" 
-				add_submenu_item(	sprintf(elgg_echo("album:user"), $page_owner->name), 
-									$CONFIG->wwwroot . "pg/photos/owned/{$page_owner->username}/", 
-									'tidypics-a' );
-				add_submenu_item( 	sprintf(elgg_echo('album:friends'),$page_owner->name), 
-									$CONFIG->wwwroot . "pg/photos/friends/{$page_owner->username}/", 
-									'tidypics-a');
-			}
-			
-			// everyone gets world albums, most recent, most viewed, most recently viewed, recently commented 
-			add_submenu_item(	elgg_echo('album:all'), 
-								$CONFIG->wwwroot . "pg/photos/world/", 
-								'tidypics-z');
-			add_submenu_item(	elgg_echo('tidypics:mostrecent'),
-								$CONFIG->wwwroot . 'pg/photos/mostrecent/',
-								'tidypics-z');
-			
-			if ($view_count != 'disabled') {
-				add_submenu_item(	elgg_echo('tidypics:mostviewed'),
-									$CONFIG->wwwroot . 'pg/photos/mostviewed/',
-									'tidypics-z');
-				add_submenu_item(	elgg_echo('tidypics:recentlyviewed'),
-									$CONFIG->wwwroot . 'pg/photos/recentlyviewed/',
-									'tidypics-z');
-			}
-			add_submenu_item(	elgg_echo('tidypics:recentlycommented'),
-								$CONFIG->wwwroot . 'pg/photos/recentlycommented/',
-								'tidypics-z');
-/*
-			add_submenu_item(	'Flickr Integration',
-								$CONFIG->wwwroot . 'mod/tidypics/pages/flickr/setup.php',
-								'tidypics-z');
-*/
-		}
-		
-	}
 	function pages_page_handler_inria($page)
 	{
 		global $CONFIG;
@@ -494,6 +385,10 @@
     					set_input('username',$page[1]);
 
 						elgg_extend_view('metatags','pages/metatags');
+						
+						if ( can_write_to_container() ){
+							add_submenu_item(elgg_echo('pages:new'), $CONFIG->url . "pg/pages/new/?container_guid=" . page_owner(), 'pagesactions');
+						}
 					}
     				include($CONFIG->pluginspath . "theme_inria/pages/index.php");	
     			break;
@@ -501,8 +396,25 @@
     				if (isset($page[1])) {
 						$guid = (int)$page[1];
     					set_input('page_guid', $guid);
+    					
+    					add_submenu_item(elgg_echo('pages:label:view'), $CONFIG->url . "pg/pages/view/$guid", 'pagesactions');
+    					add_submenu_item(elgg_echo('pages:label:history'), $CONFIG->url . "pg/pages/history/$guid", 'pagesactions');
+    					if ($pages = get_entity($guid))
+    					{
+    						if ($pages->canEdit())
+    						{
+	    						add_submenu_item(elgg_echo('pages:newchild'),"{$CONFIG->wwwroot}pg/pages/new/?parent_guid={$guid}&container_guid={$pages->container_guid}", 'pagesactions');
+	    						$delete_url = elgg_add_action_tokens_to_url("{$CONFIG->wwwroot}action/pages/delete?page={$guid}");
+	    						add_submenu_item(elgg_echo('pages:delete'), $delete_url, 'pagesactions', true);
+	    					}
+	    					set_page_owner($pages->container_guid);
+	    					if (can_write_to_container()) {
+	    						add_submenu_item(elgg_echo('pages:new'), $CONFIG->url . "pg/pages/new/?container_guid={$pages->container_guid}", 'pagesactions2');
+	    					}
+    					}
+    					
 					}
-    				include($CONFIG->pluginspath . "theme_inria/pages/edit.php");
+    				include($CONFIG->pluginspath . "pages/edit.php");
     			break;
     			case "view":
     				if (isset($page[1])) {
@@ -510,6 +422,22 @@
     					set_input('page_guid', $guid);
 
 						elgg_extend_view('metatags','pages/metatags');
+						
+						if ($pages = get_entity($guid))
+						{
+	    					if ($pages->canEdit())
+	    					{
+								add_submenu_item(elgg_echo('pages:label:edit'), $CONFIG->url . "pg/pages/edit/$guid", 'pagesactions');
+								$delete_url = elgg_add_action_tokens_to_url("{$CONFIG->wwwroot}action/pages/delete?page={$guid}");
+								add_submenu_item(elgg_echo('pages:delete'), $delete_url, 'pagesactions', true);
+								add_submenu_item(elgg_echo('pages:newchild'),"{$CONFIG->wwwroot}pg/pages/new/?parent_guid={$guid}&container_guid={$pages->container_guid}", 'pagesactions');
+							}
+							add_submenu_item(elgg_echo('pages:label:history'), $CONFIG->url . "pg/pages/history/$guid", 'pagesactions');
+							set_page_owner($pages->container_guid);
+	    					if (can_write_to_container()) {
+	    						add_submenu_item(elgg_echo('pages:new'), $CONFIG->url . "pg/pages/new/?container_guid={$pages->container_guid}", 'pagesactions2');
+	    					}
+						}
     				}
     				include($CONFIG->pluginspath . "theme_inria/pages/view.php");
     			break;   
@@ -519,9 +447,20 @@
     					set_input('page_guid', $guid);
 
 						elgg_extend_view('metatags','pages/metatags');
+						if ($pages = get_entity($guid))
+						{
+							if ($pages->canEdit())
+							{
+								add_submenu_item(elgg_echo('pages:label:edit'), $CONFIG->url . "pg/pages/edit/$guid", 'pagesactions');
+							}
+							set_page_owner($pages->container_guid);
+							if(can_write_to_container()){
+								add_submenu_item(elgg_echo('pages:new'), $CONFIG->url . "pg/pages/new/?container_guid=" . $pages->container_guid , 'pagesactions2');
+							}
+						}
     					
 					}
-    				include($CONFIG->pluginspath . "theme_inria/pages/history.php");
+    				include($CONFIG->pluginspath . "pages/history.php");
     			break; 				
     			default:
     				include($CONFIG->pluginspath . "pages/new.php");
@@ -549,17 +488,38 @@
 			
 		switch ($page[0]) {
 			case "read":
-				set_input('blogpost', $page[1]);
-				include($CONFIG->pluginspath . "theme_inria/blog/read.php");
+				$guid = (int)$page[1];
+				set_input('blogpost', $guid);
+				if($entity = get_entity($guid))
+				{
+					if ( $entity->canEdit() ){
+						add_submenu_item(elgg_echo('blog:editpost'),$CONFIG->url .  "pg/blog/edit/" . $guid, 'bookmarksactions');
+							
+						$delete_url = elgg_add_action_tokens_to_url( $CONFIG->url .  "action/blog/delete?blogpost=" . $guid );
+						add_submenu_item(elgg_echo('blog:delpost'), $delete_url, 'bookmarksactions', true);
+					}
+					set_page_owner($entity->container_guid);
+					if(can_write_to_container())
+					{
+						add_submenu_item(elgg_echo('blog:addpost'), $CONFIG->url . 'pg/blog/new/' . page_owner_entity()->username, 'bookmarksactions2');
+					}
+				}
+				include($CONFIG->pluginspath . "blog/read.php");
 				break;
 			case "archive":
 				set_input('username', $page[1]);
 				set_input('param2', $page[2]);
 				set_input('param3', $page[3]);
+				if ( can_write_to_container() ){
+					add_submenu_item(elgg_echo('blog:addpost'), $CONFIG->url . 'pg/blog/new/' . page_owner_entity()->username, 'bookmarksactions');
+				}
 				include($CONFIG->pluginspath . "blog/archive.php");
 				break;
 			case "owner":
 				set_input('username', $page[1]);
+				if ( can_write_to_container() ){
+					add_submenu_item(elgg_echo('blog:addpost'), $CONFIG->url . 'pg/blog/new/' . page_owner_entity()->username, 'bookmarksactions');
+				}
 				include($CONFIG->pluginspath . "theme_inria/blog/index.php");
 				break;
 			case "friends":
@@ -576,7 +536,82 @@
 			case "edit":
 				set_context("blog");
 				set_input('blogpost', $page[1]);
-				include($CONFIG->pluginspath . "theme_inria/blog/edit.php");
+				include($CONFIG->pluginspath . "blog/edit.php");
+				break;
+			default:
+				return false;
+		}
+	
+		return true;
+	}
+	function bookmarks_page_handler_inria($page) {
+		global $CONFIG;
+		// group usernames
+		if (substr_count($page[0], 'group:')) {
+			preg_match('/group\:([0-9]+)/i', $page[0], $matches);
+			$guid = $matches[1];
+			if ($entity = get_entity($guid)) {
+				bookmarks_url_forwarder($page);
+			}
+		}
+	
+		// user usernames
+		$user = get_user_by_username($page[0]);
+		if ($user) {
+			bookmarks_url_forwarder($page);
+		}
+	
+		switch ($page[0]) {
+			case "read":
+				$guid = (int)$page[1];
+				set_input('guid', $guid);
+				if($entity = get_entity($guid))
+				{
+					if ( $entity->canEdit() ){
+						add_submenu_item(elgg_echo('bookmarks:edit'),$CONFIG->url . "pg/bookmarks/edit/" . $guid, 'bookmarksactions');
+					
+						$delete_url = elgg_add_action_tokens_to_url($CONFIG->url . "action/bookmarks/delete?bookmark_guid=" . $guid);
+						add_submenu_item(elgg_echo('bookmarks:delete'), $delete_url, 'bookmarksactions', true);
+					}
+					set_page_owner($entity->container_guid);
+					if(can_write_to_container())
+					{
+						add_submenu_item(elgg_echo('bookmarks:add'),$CONFIG->url . "pg/bookmarks/add/" . page_owner_entity()->username, 'bookmarksactions2');
+					}	
+				}
+				require($CONFIG->path . "entities/index.php");
+				break;
+			case "friends":
+				set_input('username', $page[1]);
+				include($CONFIG->pluginspath . "bookmarks/friends.php");
+				break;
+			case "all":
+				include($CONFIG->pluginspath . "bookmarks/everyone.php");
+				break;
+			case "inbox":
+				set_input('username', $page[1]);
+				include($CONFIG->pluginspath . "bookmarks/inbox.php");
+				break;
+			case "owner":
+				set_input('username', $page[1]);
+				if(can_write_to_container())
+				{
+					add_submenu_item(elgg_echo('bookmarks:add'),$CONFIG->url . "pg/bookmarks/add/" . page_owner_entity()->username, 'bookmarksactions2');
+				}
+				include($CONFIG->pluginspath . "theme_inria/bookmarks/index.php");
+				break;
+			case "add":
+				set_input('username', $page[1]);
+				add_submenu_item(elgg_echo('bookmarks:bookmarklet:group'), $CONFIG->url . "pg/bookmarks/bookmarklet/{$page[1]}/", 'bookmarslinks');
+				include($CONFIG->pluginspath . "bookmarks/add.php");
+				break;
+			case "edit":
+				set_input('bookmark', $page[1]);
+				include($CONFIG->pluginspath . "bookmarks/add.php");
+				break;
+			case "bookmarklet":
+				set_input('username', $page[1]);
+				include($CONFIG->pluginspath . "bookmarks/bookmarklet.php");
 				break;
 			default:
 				return false;
@@ -623,11 +658,17 @@
 				break;
 			case "memberlist":
 				set_input('group_guid', $page[1]);
-				include($CONFIG->pluginspath . "theme_inria/groups/memberlist.php");
+				set_context('members');
+				include($CONFIG->pluginspath . "groups/memberlist.php");
 				break;
 			case "forum":
-				set_input('group_guid', $page[1]);
+				$guid = (int)$page[1];
 				set_context('forum');
+				set_input('group_guid', $guid);
+				set_page_owner($guid);
+				if (can_write_to_container()){
+					add_submenu_item(elgg_echo('groups:addtopic'),$CONFIG->url . "pg/forum/new/{$guid}", 'forumactions2');
+				}
 				include($CONFIG->pluginspath . "theme_inria/groups/forum.php");
 				break;
 			case "membershipreq":
@@ -644,8 +685,8 @@
 					set_input('group_guid', $page[1]);
 				}
 				
-				include($CONFIG->pluginspath . "theme_inria/groups/profile/tabs.php");
-				//include($CONFIG->pluginspath . "theme_inria/groups/groupprofile.php");
+				//include($CONFIG->pluginspath . "theme_inria/groups/profile/tabs.php");
+				include($CONFIG->pluginspath . "theme_inria/groups/groupprofile.php");
 				break;
 		}
 	}
@@ -655,73 +696,42 @@
 		switch ($page[0]) {
 			case 'new':
 				set_input('group_guid', $page[1]);
-				include($CONFIG->pluginspath . "theme_inria/forum/addtopic.php");
+				include($CONFIG->pluginspath . "groups/addtopic.php");
 				break;
 			case 'edit':
 				set_input('topic', $page[1]);
-				include($CONFIG->pluginspath . "theme_inria/forum/edittopic.php");
+				$topic = get_entity($page[1]);
+				if($topic)
+				{
+					if ( $topic->canEdit() ) {
+						$delete_url = elgg_add_action_tokens_to_url("{$CONFIG->url}action/groups/deletetopic?topic={$topic->guid}&group={$topic->container_guid}");
+						add_submenu_item(elgg_echo('groups:deltopic'), $delete_url, 'forumactions', true);
+					}
+					if (can_write_to_container()){
+						add_submenu_item(elgg_echo('groups:addtopic'),$CONFIG->url . "pg/forum/new/{$topic->container_guid}/", 'forumactions2');
+					}
+					include($CONFIG->pluginspath . "groups/edittopic.php");
+				}
 				break;
 			case "topic":
 				set_input('topic', $page[1]);
-				include($CONFIG->pluginspath . "theme_inria/forum/topicposts.php");
+				$topic = get_entity($page[1]);
+				if($topic)
+				{
+					if ( $topic->canEdit() ) {
+						add_submenu_item(elgg_echo('groups:edittopic'), $CONFIG->url . "pg/forum/edit/{$topic->guid}", 'forumactions');
+						$delete_url = elgg_add_action_tokens_to_url("{$CONFIG->url}action/groups/deletetopic?topic={$topic->guid}&group={$topic->container_guid}");
+						add_submenu_item(elgg_echo('groups:deltopic'), $delete_url, 'forumactions', true);
+					}
+					if (can_write_to_container()){
+						add_submenu_item(elgg_echo('groups:addtopic'),$CONFIG->url . "pg/forum/new/{$topic->container_guid}/", 'forumactions2');
+					}
+					include($CONFIG->pluginspath . "groups/topicposts.php");
+				}
 				break;
 		}
 	}
-	function bookmarks_page_handler_inria($page) {
-		global $CONFIG;
-		// group usernames
-		if (substr_count($page[0], 'group:')) {
-			preg_match('/group\:([0-9]+)/i', $page[0], $matches);
-			$guid = $matches[1];
-			if ($entity = get_entity($guid)) {
-				bookmarks_url_forwarder($page);
-			}
-		}
-	
-		// user usernames
-		$user = get_user_by_username($page[0]);
-		if ($user) {
-			bookmarks_url_forwarder($page);
-		}
-	
-		switch ($page[0]) {
-			case "read":
-				set_input('bookmark_guid', $page[1]);
-				require($CONFIG->pluginspath . "theme_inria/bookmarks/read.php");
-				break;
-			case "friends":
-				set_input('username', $page[1]);
-				include($CONFIG->pluginspath . "bookmarks/friends.php");
-				break;
-			case "all":
-				include($CONFIG->pluginspath . "bookmarks/everyone.php");
-				break;
-			case "inbox":
-				set_input('username', $page[1]);
-				include($CONFIG->pluginspath . "bookmarks/inbox.php");
-				break;
-			case "owner":
-				set_input('username', $page[1]);
-				include($CONFIG->pluginspath . "theme_inria/bookmarks/index.php");
-				break;
-			case "add":
-				set_input('username', $page[1]);
-				include($CONFIG->pluginspath . "theme_inria/bookmarks/add.php");
-				break;
-			case "edit":
-				set_input('bookmark', $page[1]);
-				include($CONFIG->pluginspath . "theme_inria/bookmarks/add.php");
-				break;
-			case "bookmarklet":
-				set_input('username', $page[1]);
-				include($CONFIG->pluginspath . "bookmarks/bookmarklet.php");
-				break;
-			default:
-				return false;
-		}
-	
-		return true;
-	}
+
 	/**
 	* File page handler
 	*
@@ -748,13 +758,31 @@
 	
 		switch ($page[0]) {
 			case "read":
-				set_input('guid', $page[1]);
-				//require(dirname(dirname(dirname(__FILE__))) . "/entities/index.php");
-				require($CONFIG->pluginspath . "theme_inria/file/read.php");
+				$guid = (int)$page[1];
+				set_input('guid', $guid);
+				if ($entity = get_entity($guid))
+				{
+					if ( $entity->canEdit() ) {
+						add_submenu_item(elgg_echo('file:edit'), $CONFIG->url . "pg/file/edit/{$guid}", 'fileactions');
+						$delete_url = elgg_add_action_tokens_to_url("{$CONFIG->url}action/file/delete?file={$guid}");
+						add_submenu_item(elgg_echo('file:delete'), $delete_url, 'fileactions', true);
+					}
+					set_page_owner($entity->container_guid);
+					if (can_write_to_container())
+					{
+						add_submenu_item(elgg_echo('file:upload'), $CONFIG->url . "pg/file/new/". page_owner_entity()->username, 'fileactions2');
+					}
+				}
+				require(dirname(dirname(dirname(__FILE__))) . "/entities/index.php");
+				//require($CONFIG->pluginspath . "theme_inria/file/read.php");
 				break;
 			case "owner":
 				set_input('username', $page[1]);
-				require($CONFIG->pluginspath . "theme_inria/file/index.php");
+				if (can_write_to_container())
+				{
+					add_submenu_item(elgg_echo('file:upload'), $CONFIG->url . "pg/file/new/". page_owner_entity()->username, 'fileactions2');
+				}
+				require($CONFIG->pluginspath . "file/index.php");
 				break;
 			case "friends":
 				set_input('username', $page[1]);
@@ -765,11 +793,24 @@
 				break;
 			case "new":
 				set_input('username', $page[1]);
-				require($CONFIG->pluginspath . "theme_inria/file/upload.php");
+				require($CONFIG->pluginspath . "file/upload.php");
 				break;
 			case "edit":
-				set_input('file_guid', $page[1]);
-				require($CONFIG->pluginspath . "theme_inria/file/edit.php");
+				$guid = (int)$page[1];
+				set_input('file_guid', $guid);
+				if ($entity = get_entity($guid))
+				{
+					if ( $entity->canEdit() ) {
+						$delete_url = elgg_add_action_tokens_to_url("{$CONFIG->url}action/file/delete?file={$guid}");
+						add_submenu_item(elgg_echo('file:delete'), $delete_url, 'fileactions', true);
+					}
+					set_page_owner($entity->container_guid);
+					if (can_write_to_container())
+					{
+						add_submenu_item(elgg_echo('file:upload'), $CONFIG->url . "pg/file/new/". page_owner_entity()->username, 'fileactions2');
+					}
+				}
+				require($CONFIG->pluginspath . "file/edit.php");
 				break;
 			default:
 				return false;

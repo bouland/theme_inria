@@ -5,37 +5,28 @@
 	 * @package ElggPages
 	 */
 
-	require_once( $_SERVER['DOCUMENT_ROOT'] . "/engine/start.php");
+	require_once($_SERVER['DOCUMENT_ROOT'] . "/engine/start.php");
 
 	global $CONFIG;
 	
 	// Add menus
-	if ( can_write_to_container(0,page_owner()) ){
-		add_submenu_item(elgg_echo('pages:new'), $CONFIG->url . "pg/pages/new/?container_guid=" . page_owner(), 'pagesactions');
+	$owner = page_owner_entity();
+
+	if (!$owner) {
+		forward($CONFIG->wwwroot . 'pg/pages/all/');
 	}
-	
-    //INRIA update
-	$group = page_owner_entity();
-	if ($group->pages_enable != 'no') {
-		$context = get_context();
-		set_context('search');
-		$pages = elgg_get_entities(array('types' => 'object',
-											'subtypes' => array('page_top'),
-											'container_guid' => $group->guid,
-											'limit' => 5,
-											'full_view' => FALSE,
-											'pagination' => FALSE));
-		set_context($context);
-	
+	/*
+	if (!($owner instanceof ElggGroup)) {
+    		add_submenu_item(sprintf(elgg_echo("pages:user"), page_owner_entity()->name), $CONFIG->url . "pg/pages/owned/" . page_owner_entity()->username, 'pageslinksgeneral');
+    		add_submenu_item(elgg_echo('pages:all'),$CONFIG->wwwroot."pg/pages/all/", 'pageslinksgeneral');
 	}
-	
-	if ($pages){
-		foreach ($pages as $page) {
-			pages_set_navigation_parent($page);
-			//$side_bar .= elgg_view('pages/sidebar/tree');
-		}
-	}
-    
+    if (($owner instanceof ElggEntity) && (can_write_to_container(0,$owner->guid))){
+        add_submenu_item(elgg_echo('pages:new'), $CONFIG->url . "pg/pages/new/?container_guid=" . page_owner(), 'pagesactions');
+        //if ($owner instanceof ElggUser) {
+			add_submenu_item(elgg_echo('pages:welcome'), $CONFIG->url . "pg/pages/welcome/" . $owner->username, 'pagesactions');
+		//}
+    }
+    */
 	// access check for closed groups
 	group_gatekeeper();
 	
@@ -59,20 +50,15 @@
 	set_context($context);
 	
 	//get the owners latest welcome message
-	$welcome_message = elgg_get_entities(array('types' => 'object', 'subtypes' => 'pages_welcome', 'container_guid' => $owner->guid, 'limit' => 1));
-	
-	
-	//$side_bar = elgg_view('theme_inria/pageTreeSideBar');
+	//$welcome_message = elgg_get_entities(array('types' => 'object', 'subtypes' => 'pages_welcome', 'container_guid' => $owner->guid, 'limit' => 1));
 	
 	//$body = elgg_view_title($title);
-	//theme_inria
-	$area2 = elgg_view('profile/tabs/menu', array('entity' => page_owner_entity(), 'tab_select' => 'pages'));
 	//$body .= elgg_view("pages/welcome", array('entity' => $welcome_message));
-	$content = $objects;
-	
-	$area2 .= elgg_view('profile/tabs/content', array('content' => $content));
-	
-	$body = elgg_view_layout('two_column_left_sidebar', '', $area2, $side_bar);
+	if (!$objects) {
+		$objects = elgg_view('page_elements/contentwrapper',array('body' => elgg_echo("pages:none")));
+	}
+	$body .= $objects;
+	$body = elgg_view_layout('two_column_left_sidebar', '', $body);
 	
 	// Finally draw the page
 	page_draw($title, $body);

@@ -1,9 +1,10 @@
 <?php
-if ($vars['entity']->pages_enable != 'no'){
+$group = page_owner_entity();
+if ($group && $group instanceof ElggGroup && $group->pages_enable != 'no'){
 	echo '<li ';
-	if ($vars['tab_select'] == 'pages') {
+	if (get_context() == 'pages') {
 		echo "class='selected'";
 	}
-	echo '><a href="' . $vars['url'] . 'pg/pages/owned/' . page_owner_entity()->username. '">' . elgg_echo('groups:tabs:pages') . '</a></li>';
+	echo '><a href="' . $vars['url'] . 'pg/pages/owned/' . $group->username. '">' . elgg_echo('groups:tabs:pages') . '</a></li>';
 }
 	

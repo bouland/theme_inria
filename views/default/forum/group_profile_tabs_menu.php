@@ -1,9 +1,10 @@
 <?php
-if ($vars['entity']->forum_enable != 'no'){
+$group = page_owner_entity();
+if ($group && $group instanceof ElggGroup && $group->forum_enable != 'no'){
 	echo '<li ';
-	if ($vars['tab_select'] == 'forum') {
+	if (get_context() == 'forum') {
 		echo "class='selected'";
 	}
-	echo '><a href="' . $vars['url'] . "pg/groups/forum/" . page_owner() . '">' . elgg_echo('groups:tabs:forum') . '</a></li>';
+	echo '><a href="' . $vars['url'] . "pg/groups/forum/" . $group->guid . '">' . elgg_echo('groups:tabs:forum') . '</a></li>';
 }
 	

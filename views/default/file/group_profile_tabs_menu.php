@@ -1,9 +1,10 @@
 <?php
-if ($vars['entity']->file_enable != 'no'){
+$group = page_owner_entity();
+if ($group && $group instanceof ElggGroup && $group->file_enable != 'no'){
 	echo '<li ';
-	if ($vars['tab_select'] == 'file') {
+	if (get_context() == 'file') {
 		echo "class='selected'";
 	}
-	echo '><a href="' . $vars['url'] . "pg/file/owner/" . page_owner_entity()->username . '">' . elgg_echo('groups:tabs:files') . '</a></li>';
+	echo '><a href="' . $vars['url'] . "pg/file/owner/" . $group->username . '">' . elgg_echo('groups:tabs:files') . '</a></li>';
 }
 	

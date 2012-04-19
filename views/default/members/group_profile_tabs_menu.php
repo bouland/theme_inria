@@ -1,6 +1,9 @@
 <?php
-echo '<li ';
-if ($vars['tab_select'] == 'members') {
-	echo "class='selected'";
+$group = page_owner_entity();
+if ($group && $group instanceof ElggGroup){
+	echo '<li ';
+	if (get_context() == 'members') {
+		echo "class='selected'";
+	}
+	echo '><a href="' . $vars['url'] . "pg/groups/memberlist/" . $group->guid . '">' . elgg_echo('groups:tabs:members') . '</a></li>';
 }
-echo '><a href="' . $vars['url'] . "pg/groups/memberlist/" . page_owner() . '">' . elgg_echo('groups:tabs:members') . '</a></li>';

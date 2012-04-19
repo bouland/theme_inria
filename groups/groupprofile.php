@@ -25,18 +25,25 @@
 			$view_all = false;
 		
 		
-		$area2 = elgg_view_title($title);
-		$area2 .= elgg_view('group/group', array('entity' => $group, 'user' => $_SESSION['user'], 'full' => true));
+		//$area2 = elgg_view_title($title);
+		$area2 = elgg_view('group/group', array('entity' => $group, 'user' => $_SESSION['user'], 'full' => true));
 		
 		if ($view_all) {
 			//group profile 'items' - these are not real widgets, just contents to display
-			$area2 .= elgg_view('groups/profileitems',array('entity' => $group));
+			//$area2 .= elgg_view('groups/profileitems',array('entity' => $group));
 			
 			//group members
 			//$area3 .= elgg_view('groups/members',array('entity' => $group));
 			
 			//group pages tree
 			//$area3 = elgg_view('theme_inria/sidemenu_pagetree');//INRIA update
+			
+			$river = elgg_view_river_group(array('group_guid' => $group_guid));
+			if($river){
+				$area2 .= elgg_view('custom_index_inria/index_box', array('title' => elgg_echo('groups:tabs:river'),
+																			  'body'  => $river ));
+			}
+			
 		}
 		else
 		{

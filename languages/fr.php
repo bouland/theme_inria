@@ -75,28 +75,40 @@
 		'groups:tabs:members' => 'Membres',
 		'groups:tabs:forum' => 'Forum',
 		'groups:tabs:blog' => 'News',
-		'groups:tabs:pages' => 'Wiki',
+		'groups:tabs:pages' => 'Pages',
 		'groups:tabs:files' => 'Fichiers',
 		'groups:tabs:bookmarks' => 'Signets',
-		'groups:publications' => 'Publications',
+		'groups:tabs:presentation' => 'Présentations',
+		
+		
+		'blog:none' => 'Aucune news pour le moment',
 		'blog:addpost' => "Ajouter une nouvelle news",
 		'blog:editpost' => "Editer cette news",
 		'blog:delpost' => "Supprimer cette news",
 		
-		'bookmarks:edit' => 'Modifier ce signet',
+		'bookmarks:none' => 'Aucun signet pour le moment',
+ 		'bookmarks:edit' => 'Modifier ce signet',
 		'bookmarks:delete' => 'Supprimer ce signet',
 		'bookmarks:add' => 'Partager un nouveau signet',
 		
 		'pages:new' => 'Ajouter une nouvelle page',
+		'pages:none' => 'Aucune page pour le moment',
 		
 		'groups:deltopic' => 'Supprimer la discussion',
 		'groups:tabs:river' => 'Les 6 dernières activités',
 		'groups:lastactivity' => 'Dernière activité %s',
 		'groups:admin' => 'Admin: ',
 		
-		'file:edit' => 'Modifer le fichier',
+		'file:edit' => 'Modifier le fichier',
 		'file:delete' => 'Supprimer le fichier',
 		'file:upload' => 'Partager un nouveau fichier',
+		
+		'forum:none' => 'Aucune discussion pour le moment',
+		
+		'entities:owner' => 'par %s',
+		'entities:footer:time' => 'Dernière mise à jour %s',
+		
+		'groups:tabs:photos' => 'Photos',
 		
 	);
 					
