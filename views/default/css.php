@@ -33,6 +33,36 @@ table, caption, tbody, tfoot, thead, tr, th, td {
 	font-family: inherit;
 	vertical-align: baseline;
 }
+html, body {height: 100%;}
+
+#wrapp_container {min-height: 100%;}
+
+#main_container {
+	overflow:auto;
+	padding-bottom: 76px;
+}  /* must be same height as the footer */
+
+#footer_container {
+	position: relative;
+	margin-top: -76px; /* negative value of footer height */
+	height: 75px;
+	clear:both;
+} 
+
+/*Opera Fix*/
+body:before {
+	content:"";
+	height:100%;
+	float:left;
+	width:0;
+	margin-top:-32767px;/
+}
+<!--[if !IE 7]>
+	<style type="text/css">
+		#wrap {display:table;height:100%}
+	</style>
+<![endif]-->
+
 /* remember to define focus styles! */
 :focus {
 	outline: 0;
@@ -213,7 +243,7 @@ blockquote p {
 #layout_canvas {
 	margin:0 0 20px 0;
 	padding:20px;
-	min-height: 360px;
+	min-height: 100%;
 	background: white;
 	border:1px solid #cccccc;
 	

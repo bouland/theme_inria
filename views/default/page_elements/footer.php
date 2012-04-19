@@ -16,7 +16,8 @@
 
 </div><!-- /#page_wrapper -->
 </div><!-- /#page_container -->
-
+</div><!-- /#main_container -->
+</div><!-- /#wrapp_container-->
 <div id="footer_container">
 	<div class="footer_wrapper wrapper">
 		<div id="footer_logo_elgg">

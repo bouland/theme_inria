@@ -87,3 +87,5 @@ $release = get_version(true);
 </head>
 
 <body>
+<div id="wrapp_container">
+<div id="main_container">
