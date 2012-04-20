@@ -43,6 +43,7 @@ margin:5px 0;
 }
 .blog_post .usericon{
 	float:left;
+	margin-bottom: 10px;
 }
 .blog_post h3,
 .blog_post p.tags{
