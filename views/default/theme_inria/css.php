@@ -25,6 +25,9 @@ margin:5px 0;
 #owner_block_content{
 	margin-left:35px;
 }
+#footer{
+	clear:right;
+}
 #footer_link{
 	float:left;
 }
@@ -57,4 +60,7 @@ margin:5px 0;
 }
 .generic_comment_details{
 	min-height:56px;
+}
+.latest_discussion_title{
+	min-height:20px;
 }

@@ -44,6 +44,14 @@
 	<div class="contentWrapper singleview">
 	
 	<div class="blog_post">
+		<div class="blog_post_lock">
+		<?php
+		
+		echo elgg_view('locks/entity', $vars);
+		
+		?>
+		</div>
+			
 		<?php echo elgg_view("profile/icon",array('entity' => $owner, 'size' => 'small')); ?>
 	
 		<h3><a href="<?php echo $url; ?>"><?php echo $vars['entity']->title; ?></a></h3>
