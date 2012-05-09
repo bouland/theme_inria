@@ -137,6 +137,9 @@
 		// on intercepte la notfication de creation de pages car elle a une annotation qui est notifier
 		register_plugin_hook('object:notifications','object','page_object_notifications_intercept');
 		
+		//on intercept la notification pour afficher une popup pour que l'utilisateur confirme
+		register_plugin_hook('annotation:notifications','annotation','annotation_notification_confirm_hook');
+		
 		unregister_elgg_event_handler('create', 'group', 'groups_create_event_listener');
 		register_elgg_event_handler('create', 'group', 'groups_create_event_listener_inria');
 		
@@ -171,6 +174,29 @@
 			$redirect_url = "{$CONFIG->wwwroot}index.php";
 		}
 		forward($redirect_url);
+		return true;
+	}
+	function annotation_notification_confirm_hook($hook, $entity_type, $returnvalue, $params){
+		if($hook == 'annotation:notifications' && $entity_type == 'annotation')
+		{
+			if( isset($params['event']) && isset($params['object_type']) && isset($params['object']) )
+			{
+				if($params['object'] instanceof ElggAnnotation)
+				{
+					$entity = get_entity($params['object']->entity_guid);
+					if ($entity && $entity instanceof ElggEntity && ($entity->getSubtype() == 'page_top' || $entity->getSubtype() == 'page'))
+					{
+						$send_notification = get_input('send_notification');
+						if ($send_notification == 'false')
+						{
+							return true;
+						}else{
+							return false;
+						}
+					}
+				}
+			}
+		}
 		return true;
 	}
 	function theme_inria_invite_action(){
@@ -950,6 +976,15 @@
 	}
 	function annotation_notifications_inria($event, $annotation_type, $annotation) {
 		global $CONFIG, $SESSION, $NOTIFICATION_HANDLERS;
+		
+		$hookresult = trigger_plugin_hook('annotation:notifications',$annotation_type,array(
+											'event' => $event,
+											'object_type' => $annotation_type,
+											'object' => $annotation,
+		), false);
+		if ($hookresult === true) {
+			return true;
+		}
 		
 		if ($annotation instanceof ElggAnnotation){
 			$annoted_entity = get_entity($annotation->entity_guid);
