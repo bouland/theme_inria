@@ -76,7 +76,7 @@ em, i {
 /* tables still need cellspacing="0" (for ie6) */
 table {
 	border-collapse: separate;
-	border-spacing: 0;
+	//border-spacing: 0;
 }
 caption, th, td {
 	text-align: left;

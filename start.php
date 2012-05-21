@@ -518,7 +518,7 @@
 				set_input('blogpost', $guid);
 				if($entity = get_entity($guid))
 				{
-					if ( $entity->canEdit() ){
+						if ( $entity->canEdit() ){
 						add_submenu_item(elgg_echo('blog:editpost'),$CONFIG->url .  "pg/blog/edit/" . $guid, 'bookmarksactions');
 							
 						$delete_url = elgg_add_action_tokens_to_url( $CONFIG->url .  "action/blog/delete?blogpost=" . $guid );
@@ -529,6 +529,8 @@
 					{
 						add_submenu_item(elgg_echo('blog:addpost'), $CONFIG->url . 'pg/blog/new/' . page_owner_entity()->username, 'bookmarksactions2');
 					}
+				}else{
+					//forward();
 				}
 				include($CONFIG->pluginspath . "blog/read.php");
 				break;
@@ -1254,10 +1256,11 @@
 		$ac_name = elgg_echo('groups:group') . ": " . $object->name;
 		$group_id = create_access_collection($ac_name, $object->guid);
 		if ($group_id) {
-			if ($object->access_id == ACCESS_PRIVATE){
-				update_data("UPDATE {$CONFIG->dbprefix}entities set access_id='$group_id' where guid={$object->guid}");
-			}
 			$object->group_acl = $group_id;
+			if ($object->access_id == ACCESS_PRIVATE){
+				update_entity($object->guid, $object->owner_guid, $group_id, $object->container_guid);
+			}
+			
 		} else {
 			// delete group if access creation fails
 			return false;

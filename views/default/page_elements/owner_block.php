@@ -25,14 +25,15 @@ if ($owner instanceof ElggEntity) {
 		$display .= "<div id=\"owner_block_desc\">" . $desc . "</div>";
 	}*/
 	if ($owner instanceof ElggGroup){
+		if (get_plugin_setting('hidden_groups', 'groups') == 'yes') {
+			$info =   '<div class="owner_block_lock">' . elgg_view('locks/entity', array('entity' => $owner)) . '</div><div>';
+		}	
 		if ($owner->membership == ACCESS_PUBLIC) {
-			$lock_label = elgg_echo("groups:open");
-			$lock_icon = elgg_view('icon/locks/green');
+			$membership = elgg_echo("groups:open");
 		} else {
-			$lock_label = elgg_echo("groups:closed");
-			$lock_icon = elgg_view('icon/locks/red');
+			$membership = elgg_echo("groups:closed");
 		}
-		$info =   '<div class="owner_block_lock">' . $lock_icon . '</div><div><p>' . $lock_label . '</p>';
+		$info .= '<p>' . $membership . '</p>';
 		$info .= '<p><b>' .$owner->getMembers(0,0,true) . '</b>&nbsp;'. elgg_echo('groups:member') . '</p>';
 		$info .= '<p><b>' . count($owner->getObjects('', 0, 0)) . '</b>&nbsp;'. elgg_echo('groups:publications') . '</p>';
 		$group_owner = get_user($owner->getOwner());

@@ -42,6 +42,7 @@
 		'theme_inria:topbar:mailer' => "Zimbra",
 		'theme_inria:topbar:hollydays' => "Casa",
 		'theme_inria:topbar:mission' => "IziGFD",
+		'theme_inria:topbar:mission2' => "Oreli",
 	
 		'theme_inria:event_calendar:groups' => 'Evénements du groupe',
 		'theme_inria:groups:discussions' => 'Discussions du groupe',
