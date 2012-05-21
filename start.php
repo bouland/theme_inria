@@ -197,7 +197,7 @@
 				}
 			}
 		}
-		return true;
+		return null;
 	}
 	function theme_inria_invite_action(){
 		global $CONFIG;
