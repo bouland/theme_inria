@@ -988,12 +988,16 @@
 			return true;
 		}
 		
-		if ($annotation instanceof ElggAnnotation){
+		if ($annotation instanceof ElggAnnotation)
+		{
 			$annoted_entity = get_entity($annotation->entity_guid);
-			if ($annoted_entity instanceof ElggEntity){
+			if ($annoted_entity instanceof ElggEntity)
+			{
 				$container = get_entity($annoted_entity->container_guid);
-				if ($container instanceof ElggUser || $container instanceof ElggGroup){
-					foreach($NOTIFICATION_HANDLERS as $method => $foo) {
+				if ($container instanceof ElggUser || $container instanceof ElggGroup)
+				{
+					foreach($NOTIFICATION_HANDLERS as $method => $foo)
+					{
 						$interested_users = elgg_get_entities_from_relationship(array(
 																							'relationship' => 'notify' . $method,
 																							'relationship_guid' => $container->guid, 
@@ -1001,24 +1005,31 @@
 																							'types' => 'user',
 																							'limit' => 99999
 						));
-						if ($interested_users && is_array($interested_users)) {
-							foreach($interested_users as $user) {
-								if ($user instanceof ElggUser && !$user->isBanned()) {
-									if (($user->guid != $SESSION['user']->guid) && has_access_to_entity($annoted_entity,$user)
-									&& $annotation->access_id != ACCESS_PRIVATE) {
-										$methodstring = trigger_plugin_hook('notify:entity:message',$annotation_type,array(
-																												'entity' => $annotation,
-																												'to_entity' => $user,
-																												'method' => $method),$string);
-										//hack INRIA
-										if(is_array($methodstring) ){
-											if (isset($methodstring['to']) && isset($methodstring['from']) && isset($methodstring['subject']) && isset($methodstring['message'])){
-												notify_user($methodstring['to'], $methodstring['from'], $methodstring['subject'], $methodstring['message'], NULL, array($method));
+						if ($interested_users && is_array($interested_users))
+						{
+							foreach($interested_users as $user)
+							{
+								if ($user instanceof ElggUser && !$user->isBanned())
+								{
+									if ($user->guid != $SESSION['user']->guid){
+										if ( has_access_to_entity($annoted_entity,$user))
+										{
+											$methodstring = trigger_plugin_hook('notify:entity:message',$annotation_type,array(
+																													'entity' => $annotation,
+																													'to_entity' => $user,
+																													'method' => $method),$string);
+											//hack INRIA
+											if(is_array($methodstring) )
+											{
+												if (isset($methodstring['to']) && isset($methodstring['from']) && isset($methodstring['subject']) && isset($methodstring['message'])){
+													notify_user($methodstring['to'], $methodstring['from'], $methodstring['subject'], $methodstring['message'], NULL, array($method));
+												}
 											}
-										}
-										else if (!empty($methodstring) && $methodstring !== false) {
-											$methodstring = $string;
-											notify_user($user->guid,$container->guid,$descr,$methodstring,NULL,array($method));
+											else if (!empty($methodstring) && $methodstring !== false)
+											{
+												$methodstring = $string;
+												notify_user($user->guid,$container->guid,$descr,$methodstring,NULL,array($method));
+											}
 										}
 									}
 								}
