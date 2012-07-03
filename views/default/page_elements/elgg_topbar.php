@@ -100,6 +100,7 @@ $(function() {
 					<li><a target="blank" href="https://portail-izi.inria.fr/oreli"><?php echo elgg_echo('theme_inria:topbar:mission2'); ?></a></li>
 					<li><a target="blank" href="https://casa.inria.fr"><?php echo elgg_echo('theme_inria:topbar:hollydays'); ?></a></li>
 					<li><a target="blank" href="https://annuaire.inria.fr/"><?php echo elgg_echo('theme_inria:topbar:annuaire'); ?></a></li>
+					<li><a target="blank" href="https://tickets.inria.fr/"><?php echo elgg_echo('theme_inria:topbar:tickets'); ?></a></li>
 				</ul>
 				</li>
 				
