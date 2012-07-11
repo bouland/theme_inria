@@ -564,7 +564,10 @@
 			case "edit":
 				set_context("blog");
 				set_input('blogpost', $page[1]);
-				include($CONFIG->pluginspath . "blog/edit.php");
+				if($blog = get_entity($page[1])){
+					set_input('owner_guid', $blog->container_guid);
+					include($CONFIG->pluginspath . "blog/edit.php");
+				}
 				break;
 			default:
 				return false;
