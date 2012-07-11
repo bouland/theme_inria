@@ -27,7 +27,7 @@
 		'theme_inria:topbar:new_group' => "Créer&nbsp;un&nbsp;groupe",
 		'theme_inria:topbar:invite' => 'Inviter',
 	
-		'theme_inria:topbar:collaborative' => "Collaboration",
+		'theme_inria:topbar:tools' => "Collaboration",
 		'theme_inria:topbar:forge' => "Gforge",
 		'theme_inria:topbar:etherpad' => "Etherpad",
 		'theme_inria:topbar:doodle' => "Doodle",

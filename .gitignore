@@ -1,7 +1,5 @@
-.git/
 *.tar.gz
 *~
 .project
 .buildpath
 .settings/
-graphics/aleatoire/
