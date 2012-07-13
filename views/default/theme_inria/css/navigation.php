@@ -21,3 +21,15 @@ ul.elgg-child-menu {
 	display: none;
 	//background-color:  #333333;
 }
+.elgg-menu-topbar > li > a:hover{
+	color: #E33729;
+}
+.elgg-menu-owner-block li.elgg-state-selected > a {
+    background-color: #E95F54;
+}
+.elgg-menu-owner-block li > a:hover {
+    background-color: #E33729;
+}
+.elgg-menu-page a:hover {
+    background-color: #E33729;
+}

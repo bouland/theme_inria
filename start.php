@@ -20,9 +20,14 @@ elgg_register_event_handler('init', 'system', 'theme_inria_init');
 function theme_inria_init() {
 	elgg_register_event_handler('pagesetup', 'system', 'theme_inria_pagesetup', 10000);
 	
+	elgg_extend_view('css/elgg', 'theme_inria/css/theme_inria');
+	elgg_extend_view('css/elgg', 'theme_inria/css/search');
+	
 	elgg_extend_view('css/elements/icons', 'theme_inria/css/icons');
 	
 	elgg_extend_view('css/elements/navigation', 'theme_inria/css/navigation');
+	
+	elgg_extend_view('css/elements/layout', 'theme_inria/css/layout');
 	
 	//elgg_register_library('elgg:blog', elgg_get_plugins_path() . 'blog/lib/blog.php');
 
