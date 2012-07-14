@@ -93,17 +93,6 @@ $(function() {
 					<li><a target="blank" href="https://sympa-roc.inria.fr/"><?php echo elgg_echo('theme_inria:topbar:mailinglist'); ?></a></li>
 				</ul>
 				</li>
-				<li class="drop"><a target="blank" href="https://www.inria.fr" class="menuitemtools"><?php echo elgg_echo('theme_inria:topbar:inria'); ?></a>
-				<ul>
-					<li><a target="blank" href="https://zimbra.inria.fr"><?php echo elgg_echo('theme_inria:topbar:mailer'); ?></a></li>
-					<li><a target="blank" href="https://portail-izi.inria.fr"><?php echo elgg_echo('theme_inria:topbar:mission'); ?></a></li>
-					<li><a target="blank" href="https://portail-izi.inria.fr/oreli"><?php echo elgg_echo('theme_inria:topbar:mission2'); ?></a></li>
-					<li><a target="blank" href="https://casa.inria.fr"><?php echo elgg_echo('theme_inria:topbar:hollydays'); ?></a></li>
-					<li><a target="blank" href="https://annuaire.inria.fr/"><?php echo elgg_echo('theme_inria:topbar:annuaire'); ?></a></li>
-					<li><a target="blank" href="https://tickets.inria.fr/"><?php echo elgg_echo('theme_inria:topbar:tickets'); ?></a></li>
-				</ul>
-				</li>
-				
 			</ul>
 		</div>
 	</div>
