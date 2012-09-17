@@ -15,27 +15,34 @@
 	if (!$vars['entity']) {
 		$new_page = true;
 		
-		// bootstrap the access permissions in the entity array so we can use defaults
-		if (defined('ACCESS_DEFAULT')) {
-			$vars['entity']->access_id = ACCESS_DEFAULT;
-			$vars['entity']->write_access_id = ACCESS_DEFAULT;
-		} else {
-			$vars['entity']->access_id = 0;
-			$vars['entity']->write_access_id = 0;
-		}
-
-		// pull in sticky values from session
-		if (isset($_SESSION['page_description'])) {
-			$vars['entity']->description = $_SESSION['page_description'];
-			$vars['entity']->tags = $_SESSION['page_tags'];
-			$vars['entity']->access_id = $_SESSION['page_read_access'];
-			$vars['entity']->write_access_id = $_SESSION['page_write_access'];
-
-			// clear them
-			unset($_SESSION['page_description']);
-			unset($_SESSION['page_tags']);
-			unset($_SESSION['page_read_access']);
-			unset($_SESSION['page_write_access']);
+		$container = get_entity($container_guid);
+		if($container instanceof ElggGroup)
+		{
+			$vars['entity']->access_id = $container->access_id;
+			$vars['entity']->write_access_id = $container->access_id;
+		}else{
+			// bootstrap the access permissions in the entity array so we can use defaults
+			if (defined('ACCESS_DEFAULT')) {
+				$vars['entity']->access_id = ACCESS_DEFAULT;
+				$vars['entity']->write_access_id = ACCESS_DEFAULT;
+			} else {
+				$vars['entity']->access_id = 0;
+				$vars['entity']->write_access_id = 0;
+			}
+	
+			// pull in sticky values from session
+			if (isset($_SESSION['page_description'])) {
+				$vars['entity']->description = $_SESSION['page_description'];
+				$vars['entity']->tags = $_SESSION['page_tags'];
+				$vars['entity']->access_id = $_SESSION['page_read_access'];
+				$vars['entity']->write_access_id = $_SESSION['page_write_access'];
+	
+				// clear them
+				unset($_SESSION['page_description']);
+				unset($_SESSION['page_tags']);
+				unset($_SESSION['page_read_access']);
+				unset($_SESSION['page_write_access']);
+			}
 		}
 	}
 ?>
