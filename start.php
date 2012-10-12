@@ -599,6 +599,8 @@
 					{
 						add_submenu_item(elgg_echo('bookmarks:add'),$CONFIG->url . "pg/bookmarks/add/" . page_owner_entity()->username, 'bookmarksactions2');
 					}	
+				}else{
+					forward();
 				}
 				require($CONFIG->path . "entities/index.php");
 				break;
@@ -706,7 +708,6 @@
 					set_input('group_guid', $page[1]);
 				}
 				
-				//include($CONFIG->pluginspath . "theme_inria/groups/profile/tabs.php");
 				include($CONFIG->pluginspath . "theme_inria/groups/groupprofile.php");
 				break;
 		}
@@ -795,9 +796,10 @@
 					{
 						add_submenu_item(elgg_echo('file:upload'), $CONFIG->url . "pg/file/new/". page_owner_entity()->username, 'fileactions2');
 					}
+				}else{
+					forward();
 				}
 				require(dirname(dirname(dirname(__FILE__))) . "/entities/index.php");
-				//require($CONFIG->pluginspath . "theme_inria/file/read.php");
 				break;
 			case "owner":
 				set_input('username', $page[1]);
