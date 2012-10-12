@@ -83,8 +83,8 @@ $(function() {
 				<li class="drop"><a href="#" class="menuitemtools"><?php echo elgg_echo('theme_inria:topbar:collaborative'); ?></a>
 				<ul>
 					<li><a target="blank" href="https://gforge.inria.fr/"><?php echo elgg_echo('theme_inria:topbar:forge'); ?></a></li>
-					<li><a target="blank" href="https://notepad.inria.fr/"><?php echo elgg_echo('theme_inria:topbar:etherpad'); ?></a></li>
-					<li><a target="blank" href="http://www.doodle.com/"><?php echo elgg_echo('theme_inria:topbar:doodle'); ?></a></li>
+					<li><a target="blank" href="https://notepad.inria.fr/"><?php echo elgg_echo('theme_inria:topbar:notepad'); ?></a></li>
+					<li><a target="blank" href="http://www.framadate.org/"><?php echo elgg_echo('theme_inria:topbar:framadate'); ?></a></li>
 					<li><a target="blank" href="http://qlf-devinar.inria.fr/"><?php echo elgg_echo('theme_inria:topbar:webinar'); ?></a></li>
 					<li><a target="blank" href="https://transfert.inria.fr/"><?php echo elgg_echo('theme_inria:topbar:ftp'); ?></a></li>
 					<li><a target="blank" href="https://partage.inria.fr"><?php echo elgg_echo('theme_inria:topbar:share'); ?></a></li>

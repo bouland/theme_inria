@@ -28,8 +28,8 @@
 	
 			'theme_inria:topbar:collaborative' => "Collaborate",
 			'theme_inria:topbar:forge' => "Gforge",
-			'theme_inria:topbar:etherpad' => "Etherpad",
-			'theme_inria:topbar:doodle' => "Doodle",
+			'theme_inria:topbar:notepad' => "Notepad",
+			'theme_inria:topbar:framadate' => "Framadate",
 			'theme_inria:topbar:webinar' => "Webinar",
 			'theme_inria:topbar:ftp' => "Transfert",
 			'theme_inria:topbar:share' => "Partage",
