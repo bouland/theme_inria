@@ -530,7 +530,7 @@
 						add_submenu_item(elgg_echo('blog:addpost'), $CONFIG->url . 'pg/blog/new/' . page_owner_entity()->username, 'bookmarksactions2');
 					}
 				}else{
-					//forward();
+					forward();
 				}
 				include($CONFIG->pluginspath . "blog/read.php");
 				break;
