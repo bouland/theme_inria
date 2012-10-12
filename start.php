@@ -21,7 +21,7 @@
 		
 		elgg_extend_view('jquery','theme_inria/jquery');
 		//home
-		elgg_extend_view('profile/tabs/menu_extend','theme_inria/group_profile_tabs_menu');
+		elgg_extend_view('profile/tabs/menu_extend','groups/group_profile_tabs_menu');
 		//blog
 		elgg_extend_view('profile/tabs/menu_extend','blog/group_profile_tabs_menu');
 		//pages
@@ -112,7 +112,6 @@
 		register_plugin_hook('action', 'groups/invite', 'theme_inria_invite_action');
 		
 		register_plugin_hook( 'forward', 'system', 'theme_inria_forward_hook');
-		//register_plugin_hook( 'action', 'logout', 'theme_inria_logout_hook');
 		
 		unregister_plugin_hook('access:collections:write', 'all', 'groups_write_acl_plugin_hook');
 		register_plugin_hook('access:collections:write', 'all', 'groups_write_acl_plugin_hook_inria');
@@ -166,16 +165,7 @@
 			$_SESSION['last_forward_from'] = $CONFIG->url . $_SERVER['REDIRECT_URL'];
 		}
 	}
-	function theme_inria_logout_hook($hook, $entity_type, $returnvalue, $params){
-		
-		global $CONFIG;
-		$redirect_url = $_SESSION['redirect_url'];
-		if(!$redirect_url){
-			$redirect_url = "{$CONFIG->wwwroot}index.php";
-		}
-		forward($redirect_url);
-		return true;
-	}
+	
 	function annotation_notification_confirm_hook($hook, $entity_type, $returnvalue, $params){
 		if($hook == 'annotation:notifications' && $entity_type == 'annotation')
 		{
@@ -758,6 +748,8 @@
 						add_submenu_item(elgg_echo('groups:addtopic'),$CONFIG->url . "pg/forum/new/{$topic->container_guid}/", 'forumactions2');
 					}
 					include($CONFIG->pluginspath . "groups/topicposts.php");
+				}else{
+					forward();
 				}
 				break;
 		}
