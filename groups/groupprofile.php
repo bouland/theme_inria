@@ -53,12 +53,7 @@
 		
 		$body = elgg_view_layout('two_column_left_sidebar', $area1, $area2, $area3);
 	} else {
-		$title = elgg_echo('groups:notfound');
-		
-		$area2 = elgg_view_title($title);
-		$area2 .= elgg_view('groups/contentwrapper',array('body' => elgg_echo('groups:notfound:details')));
-		
-		$body = elgg_view_layout('two_column_left_sidebar', "", $area2,"");
+		forward();
 	}
 		
 	// Finally draw the page
